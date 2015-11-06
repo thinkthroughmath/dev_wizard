@@ -20,7 +20,7 @@ config :dev_wizard, DevWizard.Endpoint,
 
 
   # Configure your database
-config :hello_phoenix, HelloPhoenix.Repo,
+config :dev_wizard, DevWizard.Repo,
   adapter: Ecto.Adapters.Postgres,
   url: System.get_env("DATABASE_URL"),
   pool_size: 20
