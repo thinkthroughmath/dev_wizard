@@ -1,6 +1,10 @@
 # DevWizard
 
+## Setup
 
+Install Elixir: `$ brew install elixir`
+
+## Run Locally
 
 To start your Phoenix app:
 
@@ -10,7 +14,12 @@ To start your Phoenix app:
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
-Ready to run in production? Please [check our deployment guides](http://www.phoenixframework.org/docs/deployment).
+## Deploy
+
+  * Install Heroku: `$ brew installnkthroughmath/dev_wizard.git heroku`
+  * `$ heroku login`
+  * `$ heroku git:remote -a dev-wizard`
+  * `$ git push heroku master`
 
 ## Learn more
 
@@ -19,3 +28,4 @@ Ready to run in production? Please [check our deployment guides](http://www.phoe
   * Docs: http://hexdocs.pm/phoenix
   * Mailing list: http://groups.google.com/group/phoenix-talk
   * Source: https://github.com/phoenixframework/phoenix
+  * Deployment: http://www.phoenixframework.org/docs/deployment
