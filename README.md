@@ -16,7 +16,7 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 ## Deploy
 
-  * Install Heroku: `$ brew installnkthroughmath/dev_wizard.git heroku`
+  * Install Heroku: `$ brew install heroku`
   * `$ heroku login`
   * `$ heroku git:remote -a dev-wizard`
   * `$ git push heroku master`
