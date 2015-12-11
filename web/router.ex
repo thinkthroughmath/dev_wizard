@@ -19,6 +19,7 @@ defmodule DevWizard.Router do
     get "/", PageController, :index
     get "/login", PageController, :login
     get "/oauth_callback", PageController, :oauth_callback
+    get "/dash", PageController, :dash
   end
 
   # Other scopes may use custom stacks.

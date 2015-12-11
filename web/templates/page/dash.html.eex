@@ -1,0 +1,6 @@
+<h1>FOO DAR</h1>
+
+
+<pre>
+  <%= @farted_out %>
+</pre>
