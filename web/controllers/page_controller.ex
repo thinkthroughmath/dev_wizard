@@ -3,11 +3,18 @@ defmodule DevWizard.PageController do
   require IEx
   def index(conn, _params) do
     conn = assign(conn, :current_user, get_session(conn, :current_user))
+#    IO.inspect get_session(conn, :current_user)
+#    IO.puts    get_session(conn, :access_token)
+#    token = get_session(conn, :access_token)
     render conn, "index.html"
   end
 
   def login(conn, _params) do
-    redirect conn, external: OAuth2.Client.authorize_url!(client, [])
+    url = client
+    |> OAuth2.Client.put_param(:scope, "user,public_repo,read:org")
+    |> OAuth2.Client.authorize_url!([])
+
+    redirect conn, external: url
   end
 
   def oauth_callback(conn, %{"code" => code}) do
@@ -15,8 +22,10 @@ defmodule DevWizard.PageController do
     token = client
       |> OAuth2.Client.put_header("Accept", "application/json")
       |> OAuth2.Client.get_token!(code: code)
+
     {:ok, %{body: user}} = OAuth2.AccessToken.get(token, "/user")
     user = %{name: user["name"], avatar: user["avatar_url"]}
+
     conn
     |> put_session(:current_user, user)
     |> put_session(:access_token, token.access_token)
