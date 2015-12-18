@@ -1,6 +1,8 @@
-<h1>FOO DAR</h1>
+<h1>PRs Involving You</h1>
 
-
-<pre>
-  <%= @farted_out %>
-</pre>
+<ol>
+  <%= for pr <- @prs_involving_you do %>
+      <% {:ok, title} = Map.fetch pr, "title" %>
+      <li><%= title %>
+  <% end %>
+</ol>

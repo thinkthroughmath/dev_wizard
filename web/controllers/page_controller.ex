@@ -29,8 +29,9 @@ defmodule DevWizard.PageController do
     end
     user = get_session(conn, :current_user)
     client = tentacat_client(conn)
+    involving = Tentacat.Pulls.filter(@organization, @default_repo, %{involving: user[:login]}, client)
     conn
-      |> assign(:farted_out, inspect(Tentacat.Pulls.filter(@organization, @default_repo, %{author: user[:login]}, client)))
+      |> assign(:prs_involving_you, involving)
       |> render "dash.html"
   end
 
