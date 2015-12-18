@@ -12,43 +12,40 @@ defmodule DevWizard.PageController do
     render conn, "index.html"
   end
 
-  def login(conn, _params) do
-    perms = "user,public_repo,read:org,repo"
-    url = client
-      |> OAuth2.Client.put_param(:scope, perms)
-      |> OAuth2.Client.authorize_url!([])
-
-    redirect conn, external: url
-  end
-
   def dash(conn, _params) do
     require_login!(conn)
 
-    gh = gh_client(conn)
+    involving = gh_client(conn)
+      |> DevWizard.GithubGateway.pulls_involving_you
 
-    involving = gh |> DevWizard.GithubGateway.pulls_involving_you
     conn
       |> assign(:prs_involving_you, involving)
       |> render "dash.html"
   end
 
+  def login(conn, _params) do
+    url = gh_auth_client
+      |> DevWizard.GithubAuth.authorize_url
+
+    redirect conn, external: url
+  end
+
   def oauth_callback(conn, %{"code" => code}) do
-    # Exchange an auth code for an access token
-    token = client
-      |> OAuth2.Client.put_header("Accept", "application/json")
-      |> OAuth2.Client.get_token!(code: code)
+    token = gh_auth_client
+      |> DevWizard.GithubAuth.get_token_from_callback_code(code)
 
-    {:ok, %{body: user}} = OAuth2.AccessToken.get(token, "/user")
-    user2 = %{name: user["name"], avatar: user["avatar_url"], login: user["login"]}
+    tent_client = Tentacat.Client.new(%{access_token: token})
 
-    tent_client = Tentacat.Client.new(%{access_token: token.access_token})
-    is_member = Tentacat.Organizations.Members.member?(@organization, user["login"], tent_client)
+    user = Tentacat.Users.me(tent_client)
+    user = %{name: user["name"], avatar: user["avatar_url"], login: user["login"]}
+
+    is_member = Tentacat.Organizations.Members.member?(@organization, user[:login], tent_client)
 
     case is_member do
       {204, _} ->
         conn
-          |> put_session(:current_user, user2)
-          |> put_session(:access_token, token.access_token)
+          |> put_session(:current_user, user)
+          |> put_session(:access_token, token)
           |> redirect(to: "/dash")
       _ ->
         conn
@@ -60,22 +57,27 @@ defmodule DevWizard.PageController do
   defp require_login!(conn) do
     unless get_session(conn, :current_user) do
       conn
-      |> put_flash(:error, "you must be logged in!!!!!!!!!!!")
-      |> redirect(to: "/")
+        |> put_flash(:error, "you must be logged in!!!!!!!!!!!")
+        |> redirect(to: "/")
     end
   end
 
   defp gh_client(conn) do
-
     settings = %{
       organization:       @organization,
-      default_repository: @default_repo
-      gh_client_id:       String.strip(System.get_env("GH_CLIENT_ID")),
-      gh_client_secret:   String.strip(System.get_env("GH_CLIENT_SECRET")),
-      gh_callback_uri:    String.strip(System.get_env("GH_CALLBACK_URL"))
+      default_repository: @default_repo,
     }
     DevWizard.GithubGateway.new(get_session(conn, :access_token),
                                 get_session(conn, :user),
                                 settings)
+  end
+
+  defp gh_auth_client do
+    settings = %{
+      gh_client_id:       String.strip(System.get_env("GH_CLIENT_ID")),
+      gh_client_secret:   String.strip(System.get_env("GH_CLIENT_SECRET")),
+      gh_callback_uri:    String.strip(System.get_env("GH_CALLBACK_URL"))
+    }
+    DevWizard.GithubAuth.new settings
   end
 end
