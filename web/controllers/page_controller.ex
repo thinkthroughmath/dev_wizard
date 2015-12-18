@@ -22,11 +22,7 @@ defmodule DevWizard.PageController do
   end
 
   def dash(conn, _params) do
-    unless get_session(conn, :current_user) do
-      conn
-        |> put_flash(:error, "you must be logged in!!!!!!!!!!!")
-        |> redirect(to: "/")
-    end
+    require_login!(conn)
 
     gh = gh_client(conn)
 
@@ -58,6 +54,14 @@ defmodule DevWizard.PageController do
         conn
           |> put_flash(:error, "You must be part of the #{@organization} organization.")
           |> redirect(to: "/")
+    end
+  end
+
+  defp require_login!(conn) do
+    unless get_session(conn, :current_user) do
+      conn
+      |> put_flash(:error, "you must be logged in!!!!!!!!!!!")
+      |> redirect(to: "/")
     end
   end
 
