@@ -27,9 +27,10 @@ defmodule DevWizard.PageController do
         |> put_flash(:error, "you must be logged in!!!!!!!!!!!")
         |> redirect(to: "/")
     end
-    user = get_session(conn, :current_user)
-    client = tentacat_client(conn)
-    involving = Tentacat.Pulls.filter(@organization, @default_repo, %{involving: user[:login]}, client)
+
+    gh = gh_client(conn)
+
+    involving = gh |> DevWizard.GithubGateway.pulls_involving_you
     conn
       |> assign(:prs_involving_you, involving)
       |> render "dash.html"
@@ -43,7 +44,6 @@ defmodule DevWizard.PageController do
 
     {:ok, %{body: user}} = OAuth2.AccessToken.get(token, "/user")
     user2 = %{name: user["name"], avatar: user["avatar_url"], login: user["login"]}
-
 
     tent_client = Tentacat.Client.new(%{access_token: token.access_token})
     is_member = Tentacat.Organizations.Members.member?(@organization, user["login"], tent_client)
@@ -61,8 +61,14 @@ defmodule DevWizard.PageController do
     end
   end
 
-  def tentacat_client(conn) do
-    Tentacat.Client.new(%{access_token: get_session(conn, :access_token)})
+  def gh_client(conn) do
+    settings = %{
+      organization:       @organization,
+      default_repository: @default_repo
+    }
+    DevWizard.GithubGateway.new(get_session(conn, :access_token),
+                                get_session(conn, :user),
+                                settings)
   end
 
   def config do
