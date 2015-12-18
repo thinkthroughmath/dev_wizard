@@ -61,29 +61,17 @@ defmodule DevWizard.PageController do
     end
   end
 
-  def gh_client(conn) do
+  defp gh_client(conn) do
+
     settings = %{
       organization:       @organization,
       default_repository: @default_repo
+      gh_client_id:       String.strip(System.get_env("GH_CLIENT_ID")),
+      gh_client_secret:   String.strip(System.get_env("GH_CLIENT_SECRET")),
+      gh_callback_uri:    String.strip(System.get_env("GH_CALLBACK_URL"))
     }
     DevWizard.GithubGateway.new(get_session(conn, :access_token),
                                 get_session(conn, :user),
                                 settings)
-  end
-
-  def config do
-    [
-      site: "https://api.github.com",
-      authorize_url: "https://github.com/login/oauth/authorize",
-      token_url: "https://github.com/login/oauth/access_token",
-      strategy: OAuth2.Strategy.AuthCode, #default
-      client_id: String.strip(System.get_env("GH_CLIENT_ID")),
-      client_secret: String.strip(System.get_env("GH_CLIENT_SECRET")),
-      redirect_uri: String.strip(System.get_env("GH_CALLBACK_URL"))
-    ]
-  end
-
-  def client do
-    OAuth2.Client.new(config)
   end
 end

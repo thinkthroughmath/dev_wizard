@@ -12,10 +12,24 @@ defmodule DevWizard.GithubGateway do
     }
   end
 
-  def pulls_involving_you(gh_gw) do
-    Tentacat.Pulls.filter(gh_gw.settings.organization,
-                          gh_gw.settings.default_repository,
-                          %{involving: gh_gw.user[:login]},
-                          gh_gw.tentacat_client)
+  def pulls_involving_you(gw) do
+    Tentacat.Pulls.filter(gw.settings.organization,
+                          gw.settings.default_repository,
+                          %{involving: gw.user[:login]},
+                          gw.tentacat_client)
+  end
+
+  defp oauth_client(gw) do
+    config = [
+      site:          "https: //api.github.com",
+      authorize_url: "https: //github.com/login/oauth/authorize",
+      token_url:     "https: //github.com/login/oauth/access_token",
+      strategy:      OAuth2.Strategy.AuthCode, #default
+      client_id:     gw.settings.gh_cilent_id,
+      client_secret: gw.settings.gh_client_secret,
+      redirect_uri:  gw.settings.gh_callback_uri
+    ]
+
+    OAuth2.Client.new(config)
   end
 end
