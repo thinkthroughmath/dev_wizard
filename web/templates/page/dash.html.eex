@@ -2,14 +2,16 @@
 
 <ol>
   <%= for {repo, prs} <- @prs_involving_you do %>
+    <%= if length(prs) > 0 do %>
       <h2><%= repo %></h2>
       <%= for pr <- prs do %>
-          <% title = pr["title"] %>
-          <li>
-            <a href='<%= pr["html_url"] %>'>
-              <%= title %>
-            </a>
-          </li>
+        <% title = pr["title"] %>
+        <li>
+          <a href='<%= pr["html_url"] %>'>
+            <%= title %>
+          </a>
+        </li>
       <% end %>
+    <% end %>
   <% end %>
 </ol>
