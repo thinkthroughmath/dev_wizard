@@ -18,6 +18,18 @@ defmodule DevWizard.PageController do
       |> render "dash.html"
   end
 
+  def pr_todo(conn, _params) do
+    require_login!(conn)
+
+    todo = gh_client(conn)
+      |> DevWizard.GithubGateway.pr_todo
+
+    conn
+      |> assign(:prs_todo, todo)
+      |> render "todo.html"
+  end
+
+
   def login(conn, _params) do
     url = gh_auth_client
       |> DevWizard.GithubAuth.authorize_url

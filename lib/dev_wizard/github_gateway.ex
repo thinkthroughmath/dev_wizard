@@ -37,4 +37,27 @@ defmodule DevWizard.GithubGateway do
         Map.put acc, repo, pulls
     end)
   end
+
+  def pr_todo(gw) do
+    settings = Application.get_env(:dev_wizard, :github_settings)
+    org = settings[:organization]
+    repos = settings[:repositories]
+
+    Enum.reduce(repos, %{},
+      fn(repo, acc) ->
+        issues = Tentacat.Issues.filter(org,
+                                      repo,
+                                      %{labels: "Needs Code Review"},
+                                      gw.tentacat_client)
+
+        issues_with_comments = Enum.map issues, fn(issue) ->
+          Map.put issue, "comments", Tentacat.Issues.Comments.list(org,
+                                                                   repo,
+                                                                   issue["number"],
+                                                                   gw.tentacat_client)
+        end
+
+        Map.put acc, repo, issues
+      end)
+  end
 end
