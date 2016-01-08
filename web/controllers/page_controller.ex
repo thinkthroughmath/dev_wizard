@@ -69,7 +69,7 @@ defmodule DevWizard.PageController do
 
   defp gh_client(conn) do
     DevWizard.GithubGateway.new(get_session(conn, :access_token),
-                                get_session(conn, :user))
+                                get_session(conn, :current_user))
   end
 
   defp gh_auth_client do

@@ -30,7 +30,8 @@ defmodule DevWizard.GithubGateway do
   end
 
   def pulls_involving_you(gw) do
-    settings = Application.get_env(:dev_wizard, :github_settings)
+    settings = Application.get_env(:dev_wizard,
+                                   :github_settings)
     org      = settings[:organization]
     repos    = settings[:repositories]
 
@@ -40,30 +41,62 @@ defmodule DevWizard.GithubGateway do
                                       repo,
                                       %{involving: gw.user[:login]},
                                       gw.tentacat_client)
-        Map.put acc, repo, pulls
+        Map.put(acc,
+                repo,
+                pulls)
     end)
   end
+  import IEx
 
   def pr_todo(gw) do
-    settings = Application.get_env(:dev_wizard, :github_settings)
+    settings = Application.get_env(:dev_wizard,
+                                   :github_settings)
     org      = settings[:organization]
     repos    = settings[:repositories]
 
-    Enum.reduce(repos, %{},
+    results = Enum.reduce(repos, %{},
       fn(repo, acc) ->
         issues = Tentacat.Issues.filter(org,
-                                      repo,
-                                      %{labels: "Needs Code Review"},
-                                      gw.tentacat_client)
+                                        repo,
+                                        %{labels: "Needs Code Review"},
+                                        gw.tentacat_client)
+        issues_with_comments = Enum.map(issues,
+          fn(issue) ->
+            Map.put(issue,
+                    "comments",
+                    Tentacat.Issues.Comments.list(org,
+                                                  repo,
+                                                  issue["number"],
+                                                  gw.tentacat_client))
+          end)
 
-        issues_with_comments = Enum.map issues, fn(issue) ->
-          Map.put issue, "comments", Tentacat.Issues.Comments.list(org,
-                                                                   repo,
-                                                                   issue["number"],
-                                                                   gw.tentacat_client)
-        end
-
-        Map.put acc, repo, issues
+        Map.put(acc,
+                repo,
+                issues_with_comments)
       end)
+
+    the_pure_bits(results, gw.user[:login])
+  end
+
+  def the_pure_bits(repos_with_issues_with_comments, current_user_name) do
+
+    the_thing = Enum.map(repos_with_issues_with_comments, fn {repo, issues} ->
+      comment_that_matches = fn(comment) ->
+        match_info = Regex.run ~r/JSON_PAYLOAD([\s\S]*?)END_JSON_PAYLOAD/, comment["body"]
+        if match_info do
+          json_payload = Poison.decode!(Enum.at(match_info, 1))
+
+          Enum.find(json_payload["assignees"], fn(assignee) ->
+            current_user_name == assignee
+          end)
+        end
+      end
+
+      find_issue_with_assignment = fn(issue)->
+        Enum.find issue["comments"], comment_that_matches
+      end
+
+      {repo, Enum.filter(issues, find_issue_with_assignment)}
+    end) |> Enum.into(%{})
   end
 end
