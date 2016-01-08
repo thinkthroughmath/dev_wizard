@@ -2,9 +2,6 @@ defmodule DevWizard.PageController do
   use DevWizard.Web, :controller
   alias Phoenix.Controller.Flash
 
-  @organization "ThinkThroughMath"
-  @default_repo  "apangea"
-
   def index(conn, _params) do
     conn = assign(conn, :current_user, get_session(conn, :current_user))
     render conn, "index.html"
@@ -60,13 +57,8 @@ defmodule DevWizard.PageController do
   end
 
   defp gh_client(conn) do
-    settings = %{
-      organization:       @organization,
-      default_repository: @default_repo,
-    }
     DevWizard.GithubGateway.new(get_session(conn, :access_token),
-                                get_session(conn, :user),
-                                settings)
+                                get_session(conn, :user))
   end
 
   defp gh_auth_client do

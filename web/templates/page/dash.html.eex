@@ -1,8 +1,11 @@
 <h1>PRs Involving You</h1>
 
 <ol>
-  <%= for pr <- @prs_involving_you do %>
-      <% {:ok, title} = Map.fetch pr, "title" %>
-      <li><%= title %>
+  <%= for {repo, prs} <- @prs_involving_you do %>
+      <h2><%= repo %></h2>
+      <%= for pr <- prs do %>
+          <% {:ok, title} = Map.fetch pr, "title" %>
+          <li><%= title %>
+      <% end %>
   <% end %>
 </ol>
