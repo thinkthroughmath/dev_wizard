@@ -5,8 +5,6 @@ defmodule DevWizard.PageController do
   @organization "ThinkThroughMath"
   @default_repo  "apangea"
 
-  require IEx
-
   def index(conn, _params) do
     conn = assign(conn, :current_user, get_session(conn, :current_user))
     render conn, "index.html"
@@ -72,11 +70,6 @@ defmodule DevWizard.PageController do
   end
 
   defp gh_auth_client do
-    settings = %{
-      gh_client_id:       String.strip(System.get_env("GH_CLIENT_ID")),
-      gh_client_secret:   String.strip(System.get_env("GH_CLIENT_SECRET")),
-      gh_callback_uri:    String.strip(System.get_env("GH_CALLBACK_URL"))
-    }
-    DevWizard.GithubAuth.new settings
+    DevWizard.GithubAuth.new
   end
 end

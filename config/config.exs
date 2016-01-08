@@ -14,6 +14,13 @@ config :dev_wizard, DevWizard.Endpoint,
   pubsub: [name: DevWizard.PubSub,
            adapter: Phoenix.PubSub.PG2]
 
+config :dev_wizard, :github_settings,
+  repositories:    System.get_env("DW_GH_REPOSITORIES") |> String.strip |> String.split(","),
+  organization:    String.strip(System.get_env("DW_GH_ORGANIZATION")),
+  client_id:       String.strip(System.get_env("DW_GH_CLIENT_ID")),
+  client_secret:   String.strip(System.get_env("DW_GH_CLIENT_SECRET")),
+  callback_uri:    String.strip(System.get_env("DW_GH_CALLBACK_URL"))
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",

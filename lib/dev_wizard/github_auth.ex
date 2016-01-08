@@ -1,15 +1,15 @@
 defmodule DevWizard.GithubAuth do
   defstruct settings: %{}
 
-  def new(settings) do
+  def new() do
     settings = %{
       site:          "https://api.github.com",
       authorize_url: "https://github.com/login/oauth/authorize",
       token_url:     "https://github.com/login/oauth/access_token",
       strategy:      OAuth2.Strategy.AuthCode, #default
-      client_id:     settings.gh_client_id,
-      client_secret: settings.gh_client_secret,
-      redirect_uri:  settings.gh_callback_uri
+      client_id:     Application.get_env(:dev_wizard, :github_settings)[:client_id],
+      client_secret: Application.get_env(:dev_wizard, :github_settings)[:client_secret],
+      redirect_uri:  Application.get_env(:dev_wizard, :github_settings)[:callback_uri]
     }
     %DevWizard.GithubAuth{
       settings: settings
