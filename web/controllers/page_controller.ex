@@ -46,8 +46,7 @@ defmodule DevWizard.PageController do
     user = Tentacat.Users.me(tent_client)
     user = %{name: user["name"], avatar: user["avatar_url"], login: user["login"]}
 
-    is_member = DevWizard.GithubGateway.is_user_member_of_organization(token,
-                                                                       @organization)
+    is_member = DevWizard.GithubGateway.is_user_member_of_organization(token)
     if is_member do
       conn
         |> put_session(:current_user, user)
@@ -55,7 +54,7 @@ defmodule DevWizard.PageController do
         |> redirect(to: "/dash")
     else
       conn
-        |> put_flash(:error, "You must be part of the #{@organization} organization.")
+        |> put_flash(:error, "You must be part of the #{DevWizard.GithubGateway.organization} organization.")
         |> redirect(to: "/")
     end
   end

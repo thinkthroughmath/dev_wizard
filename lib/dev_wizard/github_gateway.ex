@@ -10,13 +10,19 @@ defmodule DevWizard.GithubGateway do
     }
   end
 
-  def is_user_member_of_organization(gh_access_token, organization) do
-    client = Tentacat.Client.new(%{access_token: gh_access_token})
+  def organization do
+    settings = Application.get_env(:dev_wizard, :github_settings)
+    settings[:organization]
+  end
 
-    user = Tentacat.Users.me(client)
-    user = %{name: user["name"], avatar: user["avatar_url"], login: user["login"]}
+  def is_user_member_of_organization(gh_access_token) do
+
+    client = Tentacat.Client.new(%{access_token: gh_access_token})
+    user   = Tentacat.Users.me(client)
+    user   = %{name: user["name"], avatar: user["avatar_url"], login: user["login"]}
 
     is_member = Tentacat.Organizations.Members.member?(organization, user[:login], client)
+
     case is_member do
       {204, _} -> true
             _  -> false
@@ -25,8 +31,8 @@ defmodule DevWizard.GithubGateway do
 
   def pulls_involving_you(gw) do
     settings = Application.get_env(:dev_wizard, :github_settings)
-    org = settings[:organization]
-    repos = settings[:repositories]
+    org      = settings[:organization]
+    repos    = settings[:repositories]
 
     Enum.reduce(repos, %{},
       fn(repo, acc) ->
@@ -40,8 +46,8 @@ defmodule DevWizard.GithubGateway do
 
   def pr_todo(gw) do
     settings = Application.get_env(:dev_wizard, :github_settings)
-    org = settings[:organization]
-    repos = settings[:repositories]
+    org      = settings[:organization]
+    repos    = settings[:repositories]
 
     Enum.reduce(repos, %{},
       fn(repo, acc) ->
