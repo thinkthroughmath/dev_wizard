@@ -4,8 +4,12 @@
   <%= for {repo, prs} <- @prs_involving_you do %>
       <h2><%= repo %></h2>
       <%= for pr <- prs do %>
-          <% {:ok, title} = Map.fetch pr, "title" %>
-          <li><%= title %>
+          <% title = pr["title"] %>
+          <li>
+            <a href='<%= pr["html_url"] %>'>
+              <%= title %>
+            </a>
+          </li>
       <% end %>
   <% end %>
 </ol>
