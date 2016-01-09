@@ -76,8 +76,7 @@ defmodule DevWizard.GithubGateway do
   end
 
   def the_pure_bits(repos_with_issues_with_comments, current_user_name) do
-
-    the_thing = Enum.map(repos_with_issues_with_comments, fn {repo, issues} ->
+    Enum.map(repos_with_issues_with_comments, fn {repo, issues} ->
       comment_that_matches = fn(comment) ->
         match_info = Regex.run ~r/JSON_PAYLOAD([\s\S]*?)END_JSON_PAYLOAD/, comment["body"]
         if match_info do
