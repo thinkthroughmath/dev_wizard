@@ -1,27 +1,28 @@
 defmodule DevWizard.GithubGateway do
   defstruct(user: nil,
+            token: nil,
+            settings: nil,
             tentacat_client: nil)
 
-  def new(gh_access_token, user) do
+  def new(gh_access_token) do
     tentacat = Tentacat.Client.new(%{access_token: gh_access_token})
+    settings = Application.get_env(:dev_wizard, :github_settings)
+
+    user     = Tentacat.Users.me(tentacat)
+    user     = %{name: user["name"], avatar: user["avatar_url"], login: user["login"]}
+
     %DevWizard.GithubGateway{
+      token:           gh_access_token,
       user:            user,
+      settings:        settings,
       tentacat_client: tentacat
     }
   end
 
-  def organization do
-    settings = Application.get_env(:dev_wizard, :github_settings)
-    settings[:organization]
-  end
+  def is_user_member_of_organization(gw) do
+    org = gw.settings[:organization]
 
-  def is_user_member_of_organization(gh_access_token) do
-
-    client = Tentacat.Client.new(%{access_token: gh_access_token})
-    user   = Tentacat.Users.me(client)
-    user   = %{name: user["name"], avatar: user["avatar_url"], login: user["login"]}
-
-    is_member = Tentacat.Organizations.Members.member?(organization, user[:login], client)
+    is_member = Tentacat.Organizations.Members.member?(org, gw.user[:login], gw.tentacat_client)
 
     case is_member do
       {204, _} -> true
@@ -30,10 +31,8 @@ defmodule DevWizard.GithubGateway do
   end
 
   def pulls_involving_you(gw) do
-    settings = Application.get_env(:dev_wizard,
-                                   :github_settings)
-    org      = settings[:organization]
-    repos    = settings[:repositories]
+    org   = gw.settings[:organization]
+    repos = gw.settings[:repositories]
 
     Enum.reduce(repos, %{},
       fn(repo, acc) ->
@@ -46,13 +45,10 @@ defmodule DevWizard.GithubGateway do
                 pulls)
     end)
   end
-  import IEx
 
   def pr_todo(gw) do
-    settings = Application.get_env(:dev_wizard,
-                                   :github_settings)
-    org      = settings[:organization]
-    repos    = settings[:repositories]
+    org   = gw.settings[:organization]
+    repos = gw.settings[:repositories]
 
     results = Enum.reduce(repos, %{},
       fn(repo, acc) ->
@@ -60,6 +56,7 @@ defmodule DevWizard.GithubGateway do
                                         repo,
                                         %{labels: "Needs Code Review"},
                                         gw.tentacat_client)
+
         issues_with_comments = Enum.map(issues,
           fn(issue) ->
             Map.put(issue,
