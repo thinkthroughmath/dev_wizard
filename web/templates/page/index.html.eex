@@ -1,11 +1,6 @@
-<div class="jumbotron">
-  <h2>Welcome to the Dev Wizard!</h2>
-  <p class="lead">It's a real wizard.</p>
-</div>
-
 <%= if @current_user do %>
-  <h2>Welcome, <%= @current_user.name %>!</h2>
-  <img src="<%= @current_user.avatar %>" class="img-circle"/>
-<% else %>
-  <a href="/login">Login with github</a>
+  <ul>
+    <li><a href="/dash">PRs Involving Me</a></li>
+    <li><a href="/pr_todo">PRs TODO</a></li>
+  </ul>
 <% end %>

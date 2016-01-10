@@ -6,8 +6,9 @@ defmodule DevWizard.PageController do
   alias DevWizard.GithubGateway
 
   def index(conn, _params) do
-    conn = assign(conn, :current_user, get_session(conn, :current_user))
-    render conn, "index.html"
+    conn
+    |> assign(:current_user, get_session(conn, :current_user))
+    |> render "index.html"
   end
 
   def dash(conn, _params) do
@@ -17,6 +18,7 @@ defmodule DevWizard.PageController do
       |> GithubGateway.pulls_involving_you
 
     conn
+      |> assign(:current_user, get_session(conn, :current_user))
       |> assign(:prs_involving_you, involving)
       |> render "dash.html"
   end
@@ -28,6 +30,7 @@ defmodule DevWizard.PageController do
       |> GithubGateway.pr_todo
 
     conn
+      |> assign(:current_user, get_session(conn, :current_user))
       |> assign(:prs_todo, todo)
       |> render "todo.html"
   end

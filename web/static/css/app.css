@@ -24,14 +24,6 @@ form.link, form.button {
 .header {
   border-bottom: 1px solid #e5e5e5;
 }
-.logo {
-  width: 519px;
-  height: 71px;
-  display: inline-block;
-  margin-bottom: 1em;
-  background-image: url("/images/phoenix.png");
-  background-size: 519px 71px;
-}
 
 /* Everything but the jumbotron gets side spacing for mobile first views */
 .header,
@@ -77,4 +69,12 @@ form.link, form.button {
   .jumbotron {
     border-bottom: 0;
   }
+}
+
+.index--avatar {
+  width: 60px;
+}
+
+.header--title h2 {
+  margin-bottom: 0
 }

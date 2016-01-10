@@ -7,17 +7,29 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Hello Phoenix!</title>
+    <title>Dev Wizard - It's a Real Wizard!</title>
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
   </head>
 
   <body>
     <div class="container" role="main">
-      <div class="header">
-        <ul class="nav nav-pills pull-right">
-          <li><a href="http://www.phoenixframework.org/docs">Get Started</a></li>
-        </ul>
-        <span class="logo"></span>
+      <div class="header clearfix">
+        <nav>
+          <ul class="nav nav-pills pull-right">
+            <%= if @current_user do %>
+            <li>
+              <img src="<%= @current_user.avatar %>" class="img-circle index--avatar"/>
+            </li>
+            <% else %>
+            <li> <a href="/login">Login with github</a> </li>
+            <% end %>
+          </ul>
+        </nav>
+
+        <div class="header--title">
+          <h2>Dev Wizard</h2>
+          <p class="lead">It's a real wizard.</p>
+        </div>
       </div>
 
       <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
