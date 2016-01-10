@@ -19,10 +19,13 @@ defmodule DevWizard.GithubGateway do
     }
   end
 
-  def is_user_member_of_organization(gw) do
+  def member_of_organization?(gw), do: member_of_organization?(gw, gw.user[:login])
+  def member_of_organization?(gw, username) do
     org = gw.settings[:organization]
 
-    is_member = Tentacat.Organizations.Members.member?(org, gw.user[:login], gw.tentacat_client)
+    is_member = Tentacat.Organizations.Members.member?(org,
+                                                       username,
+                                                       gw.tentacat_client)
 
     case is_member do
       {204, _} -> true
@@ -30,16 +33,16 @@ defmodule DevWizard.GithubGateway do
     end
   end
 
-  def pulls_involving_you(gw) do
-    repos_issues_and_comments(gw, %{involving: gw.user[:login]})
+  def involves(gw), do: involves(gw, gw.user[:login])
+  def involves(gw, username) do
+    repos_issues_and_comments(gw, %{involving: username})
   end
 
-  def pr_todo(gw) do
+  def needs_code_review(gw) do
     repos_issues_and_comments(gw, %{labels: "Needs Code Review"})
-      |> the_pure_bits(gw.user[:login])
   end
 
-  def repos_issues_and_comments(gw, filters) do
+  defp repos_issues_and_comments(gw, filters) do
     org   = gw.settings[:organization]
     repos = gw.settings[:repositories]
 
@@ -64,26 +67,5 @@ defmodule DevWizard.GithubGateway do
                 repo,
                 issues_with_comments)
       end)
-  end
-
-  def the_pure_bits(repos_with_issues_with_comments, current_user_name) do
-    Enum.map(repos_with_issues_with_comments, fn {repo, issues} ->
-      comment_that_matches = fn(comment) ->
-        match_info = Regex.run ~r/JSON_PAYLOAD([\s\S]*?)END_JSON_PAYLOAD/, comment["body"]
-        if match_info do
-          json_payload = Poison.decode!(Enum.at(match_info, 1))
-
-          Enum.find(json_payload["assignees"], fn(assignee) ->
-            current_user_name == assignee
-          end)
-        end
-      end
-
-      find_issue_with_assignment = fn(issue)->
-        Enum.find issue["comments"], comment_that_matches
-      end
-
-      {repo, Enum.filter(issues, find_issue_with_assignment)}
-    end) |> Enum.into(%{})
   end
 end

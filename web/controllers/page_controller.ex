@@ -4,6 +4,7 @@ defmodule DevWizard.PageController do
   alias Phoenix.Controller.Flash
   alias DevWizard.GithubAuth
   alias DevWizard.GithubGateway
+  alias DevWizard.IssueWorkflow
 
   def index(conn, _params) do
     conn
@@ -15,7 +16,7 @@ defmodule DevWizard.PageController do
     require_login!(conn)
 
     involving = gh_client(conn)
-      |> GithubGateway.pulls_involving_you
+      |> GithubGateway.involves
 
     conn
       |> assign(:current_user, get_session(conn, :current_user))
@@ -26,11 +27,14 @@ defmodule DevWizard.PageController do
   def pr_todo(conn, _params) do
     require_login!(conn)
 
+    user = get_session(conn, :current_user)
+
     todo = gh_client(conn)
-      |> GithubGateway.pr_todo
+      |> GithubGateway.needs_code_review
+      |> IssueWorkflow.pr_todo(user[:login])
 
     conn
-      |> assign(:current_user, get_session(conn, :current_user))
+      |> assign(:current_user, user)
       |> assign(:prs_todo, todo)
       |> render "todo.html"
   end
@@ -48,7 +52,7 @@ defmodule DevWizard.PageController do
       |> GithubAuth.get_token_from_callback_code(code)
       |> GithubGateway.new
 
-    is_member = GithubGateway.is_user_member_of_organization(gh_client)
+    is_member = GithubGateway.member_of_organization?(gh_client)
 
     if is_member do
       conn
