@@ -31,30 +31,23 @@ defmodule DevWizard.GithubGateway do
   end
 
   def pulls_involving_you(gw) do
+    repos_issues_and_comments(gw, %{involving: gw.user[:login]})
+  end
+
+  def pr_todo(gw) do
+    repos_issues_and_comments(gw, %{labels: "Needs Code Review"})
+      |> the_pure_bits(gw.user[:login])
+  end
+
+  def repos_issues_and_comments(gw, filters) do
     org   = gw.settings[:organization]
     repos = gw.settings[:repositories]
 
     Enum.reduce(repos, %{},
       fn(repo, acc) ->
-        pulls = Tentacat.Pulls.filter(org,
-                                      repo,
-                                      %{involving: gw.user[:login]},
-                                      gw.tentacat_client)
-        Map.put(acc,
-                repo,
-                pulls)
-    end)
-  end
-
-  def pr_todo(gw) do
-    org   = gw.settings[:organization]
-    repos = gw.settings[:repositories]
-
-    results = Enum.reduce(repos, %{},
-      fn(repo, acc) ->
         issues = Tentacat.Issues.filter(org,
                                         repo,
-                                        %{labels: "Needs Code Review"},
+                                        filters,
                                         gw.tentacat_client)
 
         issues_with_comments = Enum.map(issues,
@@ -71,8 +64,6 @@ defmodule DevWizard.GithubGateway do
                 repo,
                 issues_with_comments)
       end)
-
-    the_pure_bits(results, gw.user[:login])
   end
 
   def the_pure_bits(repos_with_issues_with_comments, current_user_name) do
