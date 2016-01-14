@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/thinkthroughmath/dev_wizard.png?label=ready&title=Ready)](https://waffle.io/thinkthroughmath/dev_wizard)
 # DevWizard
 
 ## Setup
