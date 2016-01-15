@@ -1,39 +1,67 @@
-[![Stories in Ready](https://badge.waffle.io/thinkthroughmath/dev_wizard.png?label=ready&title=Ready)](https://waffle.io/thinkthroughmath/dev_wizard)
 # DevWizard
+
+## Issue and Feature Tracking
+
+[![Stories in Ready](https://badge.waffle.io/thinkthroughmath/dev_wizard.png?label=ready&title=Ready)](https://waffle.io/thinkthroughmath/dev_wizard)
 
 ## Setup
 
-Install Elixir: `$ brew install elixir`
+Instructions are written for setup and usage on Mac OSX, but should work on
+other supported platforms as well.
 
 ## Run Locally
 
-To start your Phoenix app:
+### Requirements/Dependencies
 
-  1. Install dependencies with `mix deps.get`
-  2. Create and migrate your database with `mix ecto.create && mix ecto.migrate`
-  3. Create a file called `secret_vars.sh`. See section on secret_vars.sh.
-  4. Start Phoenix endpoint with `./run_development.sh`
+  1. Elixir: http://elixir-lang.org/
+  2. Node.js: https://nodejs.org/en/
+  3. Postgres: http://www.postgresql.org/
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+### Setup
 
-### secret_vars.sh
+  1. Install Elixir: `$ brew install elixir`
+  2. Install dependencies: `$ mix deps.get`
+  3. Create and migrate your database: `$ mix ecto.create && mix ecto.migrate`
+  4. Create a file called `secret_vars.sh`. See section on `secret_vars.sh` for details.
 
-This file contains sensitive keys and should not be committed. Create your own
-with GitHub application keys.
+  Note: You may have to run `$ npm install` when prompted.
 
-The file should look like this:
+#### secret_vars.sh
+
+This file contains sensitive keys and should not be committed to source control.
+This file is required to run the DevWizard. Create your own version with your
+GitHub application keys.
+
+The file should contain the following lines:
 
 ```
 export GH_CLIENT_ID=<YOUR GITHUB CLIENT ID>
 export GH_CLIENT_SECRET=<YOUR GITHUB CLIENT SECRET>
 ```
 
+Note: Replace `<...>` with your GitHub client ID and client secret key.
+
+Note: You may need to setup these keys through GitHub.
+
+For details, see: https://github.com/settings/applications/new
+
+### Running
+
+Start your Phoenix app endpoint: `$ ./run_development.sh`
+
+Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+
 ## Deploy
 
-  * Install Heroku: `$ brew install heroku`
-  * `$ heroku login`
-  * `$ heroku git:remote -a dev-wizard`
-  * `$ git push heroku master`
+### Setup
+
+  1. Install Heroku: `$ brew install heroku`
+  2. `$ heroku login`
+  3. `$ heroku git:remote -a dev-wizard`
+
+### Deploying
+
+  To deploy to production, run: `$ git push heroku master`
 
 ## Learn more
 
