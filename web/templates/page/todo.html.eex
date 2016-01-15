@@ -7,7 +7,7 @@
       <%= for pr <- prs do %>
         <% title = pr["title"] %>
         <li>
-          <a href='<%= pr["html_url"] %>'>
+          <a target='_blank' href='<%= pr["html_url"] %>'>
             <%= title %>
           </a>
         </li>
