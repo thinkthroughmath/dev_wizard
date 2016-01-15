@@ -53,6 +53,10 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 ## Deploy
 
+Automatic deploys are setup on Heroku for any push to the `master` branch, so
+you may not need to do anything more than this to deploy. However, you can manually
+deploy using the steps below, if required.
+
 ### Setup
 
   1. Install Heroku: `$ brew install heroku`
