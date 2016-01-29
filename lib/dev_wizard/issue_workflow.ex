@@ -6,8 +6,14 @@ defmodule DevWizard.IssueWorkflow do
         if match_info do
           json_payload = Poison.decode!(Enum.at(match_info, 1))
 
+
+          formatter = fn (str) ->
+            str |> String.strip |> String.upcase
+          end
+          formatted_current_user_name = formatter.(current_user_name)
+
           Enum.find(json_payload["assignees"], fn(assignee) ->
-            current_user_name == assignee
+             formatted_current_user_name == formatter.(assignee)
           end)
         end
       end
