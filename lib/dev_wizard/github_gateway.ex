@@ -1,4 +1,6 @@
 defmodule DevWizard.GithubGateway do
+  require Logger
+
   defstruct(user: nil,
             token: nil,
             settings: nil,
@@ -62,6 +64,8 @@ defmodule DevWizard.GithubGateway do
                                                   issue["number"],
                                                   gw.tentacat_client))
           end)
+
+        Logger.debug "GithubGateway/repo_issues_and_comments/issues_for repo: #{repo}, count: #{Enum.count issues_with_comments}, filters: #{inspect filters}"
 
         Map.put(acc,
                 repo,
