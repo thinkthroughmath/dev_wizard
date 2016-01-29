@@ -1,7 +1,6 @@
 # DevWizard
 
-## Issue and Feature Tracking
-
+![Heroku](https://heroku-badge.herokuapp.com/?app=dev-wizard)
 [![Stories in Ready](https://badge.waffle.io/thinkthroughmath/dev_wizard.png?label=ready&title=Ready)](https://waffle.io/thinkthroughmath/dev_wizard)
 
 ## Setup
