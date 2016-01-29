@@ -26,6 +26,7 @@
           </ul>
         </nav>
 
+        <img src="images/dev-wizard-winters-small.png" class="img-circle header--winters"/>
         <div class="header--title">
           <h2>Dev Wizard</h2>
           <p class="lead">It's a real wizard.</p>

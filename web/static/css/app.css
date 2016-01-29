@@ -71,6 +71,11 @@ form.link, form.button {
   }
 }
 
+.header--winters {
+    height: 100px;
+    float: left;
+}
+
 .index--avatar {
   width: 60px;
 }
