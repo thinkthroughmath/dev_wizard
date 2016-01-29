@@ -1,6 +1,5 @@
 <%= if @current_user do %>
   <ul>
-    <li><a href="/dash">PRs Involving Me</a></li>
-    <li><a href="/pr_todo">PRs TODO</a></li>
+    <li><a href="/dash">Dashboard</a></li>
   </ul>
 <% end %>

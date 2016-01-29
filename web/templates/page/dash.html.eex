@@ -1,13 +1,13 @@
-<h1>PRs Involving You</h1>
+<h1>PRs TODO</h1>
 
 <ol>
-  <%= for {repo, prs} <- @prs_involving_you do %>
+  <%= for {repo, prs} <- @prs_todo do %>
     <%= if length(prs) > 0 do %>
       <h2><%= repo %></h2>
       <%= for pr <- prs do %>
         <% title = pr["title"] %>
         <li>
-          <a href='<%= pr["html_url"] %>'>
+          <a target='_blank' href='<%= pr["html_url"] %>'>
             <%= title %>
           </a>
         </li>

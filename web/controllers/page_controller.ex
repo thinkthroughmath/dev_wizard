@@ -15,18 +15,6 @@ defmodule DevWizard.PageController do
   def dash(conn, _params) do
     require_login!(conn)
 
-    involving = gh_client(conn)
-      |> GithubGateway.involves
-
-    conn
-      |> assign(:current_user, get_session(conn, :current_user))
-      |> assign(:prs_involving_you, involving)
-      |> render "dash.html"
-  end
-
-  def pr_todo(conn, _params) do
-    require_login!(conn)
-
     user = get_session(conn, :current_user)
 
     todo = gh_client(conn)
@@ -36,9 +24,8 @@ defmodule DevWizard.PageController do
     conn
       |> assign(:current_user, user)
       |> assign(:prs_todo, todo)
-      |> render "todo.html"
+      |> render "dash.html"
   end
-
 
   def login(conn, _params) do
     url = gh_auth_client
