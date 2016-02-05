@@ -27,6 +27,16 @@ defmodule DevWizard.PageController do
       |> render "dash.html"
   end
 
+  def needs_review(conn, _params) do
+    require_login!(conn)
+
+    user = get_session(conn, :current_user)
+
+    conn
+      |> assign(:current_user, user)
+      |> render "needs_review.html"
+  end
+
   def login(conn, _params) do
     url = gh_auth_client
       |> GithubAuth.authorize_url

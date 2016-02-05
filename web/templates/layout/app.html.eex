@@ -33,6 +33,12 @@
         </div>
       </div>
 
+      <%= if @current_user do %>
+      <div>
+        <a href="/dash">dash</a> | <a href="/needs_review">Needs Review</a>
+      </div>
+      <% end %>
+
       <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
       <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
 
