@@ -1,1 +1,36 @@
 <h1>Needs Review</h1>
+<%= for {repo, prs} <- @needs_review do %>
+  <%= if length(prs) > 0 do %>
+    <h2><%= repo %></h2>
+    <table border="1">
+      <tr>
+        <th>#</th>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Updated At</th>
+        <th>Created At</th>
+      </tr>
+      <%= for pr <- prs do %>
+        <tr>
+          <td>
+            <%= pr["number"] %>
+          </td>
+          <td>
+            <a target='_blank' href='<%= pr["html_url"] %>'>
+              <%= pr["title"] %>
+            </a>
+          </td>
+          <td>
+            <%= pr["user"]["login"] %>
+          </td>
+          <td>
+            <%= pr["updated_at"] %>
+          </td>
+          <td>
+            <%= pr["created_at"] %>
+          </td>
+        </tr>
+      <% end %>
+    </table>
+  <% end %>
+<% end %>
