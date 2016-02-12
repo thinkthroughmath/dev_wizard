@@ -26,3 +26,4 @@ erl_crash.dump
 secret_vars.sh
 
 .tern-port
+.DS_Store
