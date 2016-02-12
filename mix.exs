@@ -20,7 +20,8 @@ defmodule DevWizard.Mixfile do
     [mod: {DevWizard, []},
      applications: [:phoenix, :phoenix_html, :cowboy, :logger,
                     :phoenix_ecto, :postgrex,
-                    :oauth2]]
+                    :oauth2
+                   ]]
   end
 
   # Specifies which paths to compile per environment.
@@ -38,7 +39,9 @@ defmodule DevWizard.Mixfile do
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:cowboy, "~> 1.0"},
      {:oauth2, "~> 0.5"},
-     {:tentacat, "~> 0.3.1"}]
+     {:tentacat, "~> 0.3.1"},
+     {:exactor, "~> 2.2.0"}
+    ]
   end
 
   # Aliases are shortcut or tasks specific to the current project.
