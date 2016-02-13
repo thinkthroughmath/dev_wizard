@@ -1,5 +1,6 @@
 defmodule DevWizard.GithubGateway do
   require Logger
+  alias DevWizard.GithubGateway.Cache
 
   defstruct(user: nil,
             token: nil,
@@ -25,13 +26,20 @@ defmodule DevWizard.GithubGateway do
   def member_of_organization?(gw, username) do
     org = gw.settings[:organization]
 
-    is_member = Tentacat.Organizations.Members.member?(org,
-                                                       username,
-                                                       gw.tentacat_client)
+    status =
+      Cache.fetch_or_create(
+        {:is_member, org, username},
+        60 * 10, # 10 minutes
+        fn ->
+          {req_status, _} = Tentacat.Organizations.Members.member?(org,
+                                                                   username,
+                                                                   gw.tentacat_client)
+          req_status
+        end)
 
-    case is_member do
-      {204, _} -> true
-            _  -> false
+    case status do
+      204 -> true
+      _   -> false
     end
   end
 
