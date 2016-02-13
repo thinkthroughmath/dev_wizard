@@ -20,7 +20,7 @@ defmodule DevWizard.Mixfile do
     [mod: {DevWizard, []},
      applications: [:phoenix, :phoenix_html, :cowboy, :logger,
                     :phoenix_ecto, :postgrex,
-                    :oauth2
+                    :oauth2, :timex
                    ]]
   end
 
@@ -40,7 +40,8 @@ defmodule DevWizard.Mixfile do
      {:cowboy, "~> 1.0"},
      {:oauth2, "~> 0.5"},
      {:tentacat, "~> 0.3.1"},
-     {:exactor, "~> 2.2.0"}
+     {:exactor, "~> 2.2.0"},
+     {:timex, "~> 1.0"}
     ]
   end
 
