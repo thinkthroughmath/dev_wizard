@@ -58,19 +58,37 @@ defmodule DevWizard.GithubGateway do
 
     Enum.reduce(repos, %{},
       fn(repo, acc) ->
-        issues = Tentacat.Issues.filter(org,
-                                        repo,
-                                        filters,
-                                        gw.tentacat_client)
+
+        issues = Cache.fetch_or_create(
+          {:issues, repo},
+          60 * 10, # 10 minutes
+          fn ->
+            Tentacat.Issues.filter(org,
+                                   repo,
+                                   filters,
+                                   gw.tentacat_client)
+          end)
+
+
+
+
 
         issues_with_comments = Enum.map(issues,
           fn(issue) ->
+            comments =
+              Cache.fetch_or_create(
+                {:issue_comments, repo, issue["number"]},
+                60 * 10, # 10 minutes
+                fn ->
+                  Tentacat.Issues.Comments.list(org,
+                                                repo,
+                                                issue["number"],
+                                                gw.tentacat_client)
+                end)
+
             Map.put(issue,
                     "comments",
-                    Tentacat.Issues.Comments.list(org,
-                                                  repo,
-                                                  issue["number"],
-                                                  gw.tentacat_client))
+                    comments)
           end)
 
         Logger.debug "GithubGateway/repo_issues_and_comments/issues_for repo: #{repo}, count: #{Enum.count issues_with_comments}, filters: #{inspect filters}"
