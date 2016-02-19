@@ -1,28 +1,51 @@
 defmodule DevWizard.IssueWorkflow do
+
+  @json_payload_regex ~r/JSON_PAYLOAD([\s\S]*?)END_JSON_PAYLOAD/
+
   def pr_todo(repos_with_issues_with_comments, current_user_name) do
     Enum.map(repos_with_issues_with_comments, fn {repo, issues} ->
-      comment_that_matches = fn(comment) ->
-        match_info = Regex.run ~r/JSON_PAYLOAD([\s\S]*?)END_JSON_PAYLOAD/, comment["body"]
-        if match_info do
-          json_payload = Poison.decode!(Enum.at(match_info, 1))
-
-
-          formatter = fn (str) ->
-            str |> String.strip |> String.upcase
-          end
-          formatted_current_user_name = formatter.(current_user_name)
-
-          Enum.find(json_payload["assignees"], fn(assignee) ->
-             formatted_current_user_name == formatter.(assignee)
-          end)
-        end
+      comment_that_matches_current_user = fn (comment)->
+        comment_has_assigned_user?(comment,
+                                  current_user_name)
       end
 
-      find_issue_with_assignment = fn(issue)->
-        Enum.find issue["comments"], comment_that_matches
+      issue_has_assignment? = fn(issue)->
+        Enum.find(issue["comments"],
+                  comment_that_matches_current_user)
       end
 
-      {repo, Enum.filter(issues, find_issue_with_assignment)}
+      assigned_prs = Enum.filter(issues, issue_has_assignment?)
+
+      {repo, assigned_prs}
     end) |> Enum.into(%{})
+  end
+
+  defp comment_has_assigned_user?(comment, assigned_username) do
+
+    assignment_data = parsed_json_payload(comment)
+
+    case assignment_data do
+      {:some, data} ->
+        Enum.find(data["assignees"], fn(assignee) ->
+          normalize_username(assigned_username) ==
+            normalize_username(assignee)
+        end)
+      _ -> false
+    end
+  end
+
+  defp parsed_json_payload(comment) do
+    match_info = Regex.run @json_payload_regex, comment["body"]
+
+    if match_info do
+      json_payload = Poison.decode!(Enum.at(match_info, 1))
+      {:some, json_payload}
+    else
+      {:none, "no json payload found"}
+    end
+  end
+
+  defp normalize_username(name) do
+    name |> String.strip |> String.upcase
   end
 end
