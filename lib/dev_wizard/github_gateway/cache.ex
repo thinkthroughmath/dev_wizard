@@ -5,6 +5,10 @@ defmodule DevWizard.GithubGateway.Cache do
 
   defstart start_link, do: initial_state(%{})
 
+  defcall empty do
+    set_and_reply(%{}, :ok)
+  end
+
   defcall fetch_or_create(key, time_to_keep, creator), state: state do
     if Map.has_key?(state, key) do
       Logger.debug "Cache  hit: #{inspect key}"
