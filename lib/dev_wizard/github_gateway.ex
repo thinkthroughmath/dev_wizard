@@ -69,10 +69,6 @@ defmodule DevWizard.GithubGateway do
                                    gw.tentacat_client)
           end)
 
-
-
-
-
         issues_with_comments = Enum.map(issues,
           fn(issue) ->
             comments =
