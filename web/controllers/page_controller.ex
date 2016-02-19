@@ -9,7 +9,7 @@ defmodule DevWizard.PageController do
   def index(conn, _params) do
     conn
     |> assign(:current_user, get_session(conn, :current_user))
-    |> render "index.html"
+    |> render("index.html")
   end
 
   def dash(conn, _params) do
@@ -24,7 +24,7 @@ defmodule DevWizard.PageController do
     conn
       |> assign(:current_user, user)
       |> assign(:prs_todo, todo)
-      |> render "dash.html"
+      |> render("dash.html")
   end
 
   def needs_review(conn, _params) do
@@ -38,7 +38,7 @@ defmodule DevWizard.PageController do
     conn
       |> assign(:current_user, user)
       |> assign(:needs_review, needs_review)
-      |> render "needs_review.html"
+      |> render("needs_review.html")
   end
 
   def login(conn, _params) do
