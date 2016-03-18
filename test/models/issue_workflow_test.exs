@@ -34,4 +34,20 @@ defmodule DevWizard.IssueWorkflowTest do
 
     assert Regex.run(~r/Code review assigned to dev\(s\): @carols10cents/, first_comment["body"])
   end
+
+  test "marks issues that have been signed off" do
+    assigned = IssueWorkflow.pr_todo(fixture_data, "marktfrey")["live_teaching"]
+    assert Enum.count(assigned) == 1
+
+    issue_with_lgtm = List.first(assigned)
+    assert issue_with_lgtm["review_state"] == :signed_off
+  end
+
+  test "marks issues that have not been signed off" do
+    assigned = IssueWorkflow.pr_todo(fixture_data, "seejee")["live_teaching"]
+    assert Enum.count(assigned) == 1
+
+    issue_with_lgtm = List.first(assigned)
+    assert issue_with_lgtm["review_state"] == :not_signed_off
+  end
 end

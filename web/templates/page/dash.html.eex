@@ -10,6 +10,8 @@
           <a target='_blank' href='<%= pr["html_url"] %>'>
             <%= title %>
           </a>
+          <br/>
+          <%= review_state pr %>
         </li>
       <% end %>
     <% end %>
