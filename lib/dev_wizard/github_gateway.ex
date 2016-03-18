@@ -7,20 +7,20 @@ defmodule DevWizard.GithubGateway do
   defstruct(user: nil,
             token: nil,
             settings: nil,
-            tentacat_client: nil)
+            github_client: nil)
 
   def new(gh_access_token) do
-    tentacat = Tentacat.Client.new(%{access_token: gh_access_token})
+    github   = @github_api.new(%{access_token: gh_access_token})
     settings = Application.get_env(:dev_wizard, :github_settings)
 
-    user     = Tentacat.Users.me(tentacat)
+    user     = @github_api.me(github)
     user     = %{name: user["name"], avatar: user["avatar_url"], login: user["login"]}
 
     %DevWizard.GithubGateway{
       token:           gh_access_token,
       user:            user,
       settings:        settings,
-      tentacat_client: tentacat
+      github_client: github
     }
   end
 
@@ -33,9 +33,9 @@ defmodule DevWizard.GithubGateway do
         {:is_member, org, username},
         60 * 10, # 10 minutes
         fn ->
-          {req_status, _} = Tentacat.Organizations.Members.member?(org,
-                                                                   username,
-                                                                   gw.tentacat_client)
+          {req_status, _} = @github_api.member_of_org?(gw.github_client,
+                                                       org,
+                                                       username)
           req_status
         end)
 
@@ -65,10 +65,12 @@ defmodule DevWizard.GithubGateway do
           {:issues, repo},
           60 * 10, # 10 minutes
           fn ->
-            Tentacat.Issues.filter(org,
-                                   repo,
-                                   filters,
-                                   gw.tentacat_client)
+            @github_api.filter(
+              gw.github_client,
+              org,
+              repo,
+              filters
+            )
           end)
 
         issues_with_comments = Enum.map(issues,
@@ -78,10 +80,12 @@ defmodule DevWizard.GithubGateway do
                 {:issue_comments, repo, issue["number"]},
                 60 * 10, # 10 minutes
                 fn ->
-                  Tentacat.Issues.Comments.list(org,
-                                                repo,
-                                                issue["number"],
-                                                gw.tentacat_client)
+                  @github_api.list(
+                    gw.github_client,
+                    org,
+                    repo,
+                    issue["number"]
+                  )
                 end)
 
             Map.put(issue,
