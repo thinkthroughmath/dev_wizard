@@ -17,3 +17,5 @@ config :dev_wizard, DevWizard.Repo,
   database: "dev_wizard_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
+
+config :dev_wizard, :github_api, DevWizard.GithubGateway.Memory

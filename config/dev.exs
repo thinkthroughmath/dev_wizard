@@ -24,6 +24,8 @@ config :dev_wizard, DevWizard.Endpoint,
     ]
   ]
 
+config :dev_wizard, :github_api, DevWizard.GithubGateway.Client
+
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"
 

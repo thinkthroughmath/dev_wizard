@@ -50,8 +50,8 @@ defmodule DevWizard.PageController do
 
   def oauth_callback(conn, %{"code" => code}) do
     gh_client = gh_auth_client
-      |> GithubAuth.get_token_from_callback_code(code)
-      |> GithubGateway.new
+    |> GithubAuth.get_token_from_callback_code(code)
+    |> GithubGateway.new
 
     is_member = GithubGateway.member_of_organization?(gh_client)
 
