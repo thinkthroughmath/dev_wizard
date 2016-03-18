@@ -27,6 +27,16 @@ defmodule DevWizard.GithubGatewayTest do
       ]
     end
 
+    test "member of org" , %{pid: pid} do
+      :ok = pid |> Memory.add_member_to_org("thinkthroughmath", "joelo")
+
+      is_member   = pid |> Memory.member_of_org?("thinkthroughmath", "joelo")
+      isnt_member = pid |> Memory.member_of_org?("thinkthroughmath", "steve")
+
+      assert is_member == true
+      assert isnt_member == false
+    end
+
   end
 
   defmodule Cache do

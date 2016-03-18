@@ -19,13 +19,15 @@ defmodule DevWizard.GithubGateway.Memory do
   end
 
   defcall add_member_to_org(org, username), state: state do
-    new_membership = [[org, username] | state.org_memberships]
+    new_membership = [{org, username} | state.org_memberships]
 
     %{state | org_memberships: new_membership} |> set_and_reply(:ok)
   end
 
   defcall member_of_org?(org, username), state: state do
-    reply(Enum.member?(state.org_memberships, [org, username]))
+    state.org_memberships
+    |> Enum.member?({org, username})
+    |> reply
   end
 
   defcall add_issue(org, repo, issue_info), state: state do
