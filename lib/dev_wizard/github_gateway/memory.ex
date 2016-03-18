@@ -3,6 +3,7 @@ defmodule DevWizard.GithubGateway.Memory do
   require Logger
 
   defstart start_link, do: initial_state(blank_slate)
+  defcast stop, do: stop_server(:normal)
 
   def new(_) do
     start_link
@@ -12,31 +13,42 @@ defmodule DevWizard.GithubGateway.Memory do
     reply(state.me)
   end
 
-  defcast set_me(me), state: state do
+  defcall set_me(me), state: state do
     new_state(%{state | me: me})
+    reply(:ok)
   end
 
-  defcast add_member_to_org(org, username), state: state do
+  defcall add_member_to_org(org, username), state: state do
     new_membership = [[org, username] | state.org_memberships]
-    new_state(%{state | org_memberships: new_membership})
+
+    %{state | org_memberships: new_membership} |> set_and_reply(:ok)
   end
 
   defcall member_of_org?(org, username), state: state do
     reply(Enum.member?(state.org_memberships, [org, username]))
   end
 
-  defcast add_issue(org, repo, issue_info), state: state do
+  defcall add_issue(org, repo, issue_info), state: state do
     new_issue_entry = {org, repo, issue_info}
-    new_state(%{state | issues: [new_issue_entry | state.issues]})
+
+    %{state | issues: [new_issue_entry | state.issues]} |> set_and_reply(:ok)
   end
 
-  defcall filter_issues(org, repo, _filters), state: state do
-    filter = fn({an_org, a_repo, _}) ->
+  defcall filter_issues(org, repo, criteria), state: state do
+    repo_filter = fn({an_org, a_repo, _}) ->
       {an_org, a_repo} == {org, repo}
     end
 
     state.issues
-    |> Enum.filter(filter)
+    |> Enum.filter(repo_filter)
+    |> Enum.map(fn({_org, _repo, issue}) -> issue end)
+    |> Enum.filter(fn(issue) ->
+      case issue do
+        ^criteria -> true
+        _         -> false
+      end
+    end)
+    |> Enum.reverse
     |> reply
   end
 

@@ -1,13 +1,32 @@
 defmodule DevWizard.GithubGatewayTest do
   defmodule Gateway do
     use ExUnit.Case
+    alias DevWizard.GithubGateway.Memory
     setup do
-      :ok
+      {:ok, pid} = Memory.start_link
+
+      on_exit fn ->
+        Memory.stop(pid)
+      end
+
+      {:ok, pid: pid}
     end
 
-    test "hi" do
-      DevWizard.GithubGateway.Memory.start_link
+    test "filtering issues", %{pid: pid} do
+      :ok = pid |> Memory.add_issue("thinkthroughmath", "apangea", %{something: "matching"})
+      :ok = pid |> Memory.add_issue("thinkthroughmath", "apangea", %{something: "else"})
+
+      matches = pid |> Memory.filter_issues(
+        "thinkthroughmath",
+        "apangea",
+        %{something: "matching"}
+      )
+
+      assert matches == [
+        %{something: "matching"},
+      ]
     end
+
   end
 
   defmodule Cache do
