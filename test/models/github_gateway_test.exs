@@ -37,6 +37,21 @@ defmodule DevWizard.GithubGatewayTest do
       assert isnt_member == false
     end
 
+    test "filtering comments", %{pid: pid} do
+      :ok = pid |> Memory.add_comment("thinkthroughmath", "apangea", %{number: 1})
+      :ok = pid |> Memory.add_comment("thinkthroughmath", "apangea", %{number: 2})
+
+      matches = pid |> Memory.comments(
+        "thinkthroughmath",
+        "apangea",
+        1
+      )
+
+      assert matches == [
+        %{number: 1}
+      ]
+    end
+
   end
 
   defmodule Cache do

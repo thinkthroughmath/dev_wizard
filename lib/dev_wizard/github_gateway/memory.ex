@@ -54,6 +54,25 @@ defmodule DevWizard.GithubGateway.Memory do
     |> reply
   end
 
+  defcall add_comment(org, repo, comment), state: state do
+    new_comment = {org, repo, comment}
+
+    %{state | comments: [new_comment | state.comments]} |> set_and_reply(:ok)
+  end
+
+  defcall comments(org, repo, issue_number), state: state do
+    repo_filter = fn({an_org, a_repo, _}) ->
+      {an_org, a_repo} == {org, repo}
+    end
+
+    state.comments
+    |> Enum.filter(repo_filter)
+    |> Enum.map(fn({_org, _repo, comment}) -> comment end)
+    |> Enum.filter(fn(comment) -> comment.number == issue_number end)
+    |> Enum.reverse
+    |> reply
+  end
+
   defcall reset() do
     set_and_reply(blank_slate, :ok)
   end
