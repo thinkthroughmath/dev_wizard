@@ -2,26 +2,31 @@ defmodule DevWizard.IssueWorkflow do
 
   @json_payload_regex ~r/JSON_PAYLOAD([\s\S]*?)END_JSON_PAYLOAD/
 
-  def pr_todo(repos_with_issues_with_comments, current_user_name) do
-    Enum.map(repos_with_issues_with_comments, fn {repo, issues} ->
-      comment_that_matches_current_user = fn (comment)->
-        comment_has_assigned_user?(comment,
-                                  current_user_name)
-      end
+  def pr_todo(repos_with_issues_with_comments, user) do
+    repos_with_issues_with_comments
+    |> Enum.map(fn {repo, issues} ->
+      {repo, assigned_prs_for_repo(repo, issues, user)}
+    end)
+    |> Enum.into(%{})
+  end
 
-      issue_has_assignment? = fn(issue)->
-        Enum.find(issue["comments"],
-                  comment_that_matches_current_user)
-      end
+  defp assigned_prs_for_repo(repo, issues, user) do
+    comment_that_matches_current_user = fn (comment)->
+      comment_has_assigned_user?(comment, user)
+    end
 
-      assigned_prs = Enum.filter(issues, issue_has_assignment?)
+    issue_has_assignment? = fn(issue)->
+      Enum.find(
+        issue["comments"],
+        comment_that_matches_current_user
+      )
+    end
 
-      {repo, assigned_prs}
-    end) |> Enum.into(%{})
+    issues
+    |> Enum.filter(issue_has_assignment?)
   end
 
   defp comment_has_assigned_user?(comment, assigned_username) do
-
     assignment_data = parsed_json_payload(comment)
 
     case assignment_data do
