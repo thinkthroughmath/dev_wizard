@@ -34,28 +34,14 @@ defmodule DevWizard.GithubGateway.Memory do
     filter = fn({an_org, a_repo, _}) ->
       {an_org, a_repo} == {org, repo}
     end
-    reply(Enum.filter(state.issues, filter))
+
+    state.issues
+    |> Enum.filter(filter)
+    |> reply
   end
 
   defcall reset() do
     set_and_reply(blank_slate, :ok)
-  end
-
-  def member_of_org?(client, org, username) do
-    {req_status, _} = Tentacat.Organizations.Members.member?(org, username, client.tentacat)
-
-    case req_status do
-      204 -> true
-      _   -> false
-    end
-  end
-
-  def filter_issues(client, org, repo, filters) do
-    Tentacat.Issues.filter(org, repo, filters, client.tentacat)
-  end
-
-  def comments(client, org, repo, issue)  do
-    Tentacat.Issues.Comments.list(org, repo, issue, client.tentacat)
   end
 
   defp blank_slate do
