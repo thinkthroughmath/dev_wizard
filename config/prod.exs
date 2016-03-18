@@ -25,6 +25,8 @@ config :dev_wizard, DevWizard.Repo,
   url: System.get_env("DATABASE_URL"),
   pool_size: 20
 
+config :dev_wizard, :github_api, DevWizard.GithubGateway.Client
+
 # Do not print debug messages in production
 config :logger, level: :debug
 

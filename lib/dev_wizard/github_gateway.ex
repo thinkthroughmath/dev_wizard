@@ -2,6 +2,8 @@ defmodule DevWizard.GithubGateway do
   require Logger
   alias DevWizard.GithubGateway.Cache
 
+  @github_api Application.get_env(:dev_wizard, :github_api)
+
   defstruct(user: nil,
             token: nil,
             settings: nil,
