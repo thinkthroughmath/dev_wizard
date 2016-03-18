@@ -10,7 +10,7 @@ defmodule DevWizard.GithubGateway do
             github_client: nil)
 
   def new(gh_access_token) do
-    github   = @github_api.new(%{access_token: gh_access_token})
+    github   = @github_api.new(gh_access_token)
     settings = Application.get_env(:dev_wizard, :github_settings)
 
     user     = @github_api.me(github)
@@ -28,21 +28,16 @@ defmodule DevWizard.GithubGateway do
   def member_of_organization?(gw, username) do
     org = gw.settings[:organization]
 
-    status =
-      Cache.fetch_or_create(
-        {:is_member, org, username},
-        60 * 10, # 10 minutes
-        fn ->
-          {req_status, _} = @github_api.member_of_org?(gw.github_client,
-                                                       org,
-                                                       username)
-          req_status
-        end)
-
-    case status do
-      204 -> true
-      _   -> false
-    end
+    Cache.fetch_or_create(
+      {:is_member, org, username},
+      60 * 10, # 10 minutes
+      fn ->
+        @github_api.member_of_org?(
+          gw.github_client,
+          org,
+          username
+        )
+      end)
   end
 
   def involves(gw), do: involves(gw, gw.user[:login])
@@ -65,7 +60,7 @@ defmodule DevWizard.GithubGateway do
           {:issues, repo},
           60 * 10, # 10 minutes
           fn ->
-            @github_api.filter(
+            @github_api.filter_issues(
               gw.github_client,
               org,
               repo,
@@ -80,7 +75,7 @@ defmodule DevWizard.GithubGateway do
                 {:issue_comments, repo, issue["number"]},
                 60 * 10, # 10 minutes
                 fn ->
-                  @github_api.list(
+                  @github_api.comments(
                     gw.github_client,
                     org,
                     repo,

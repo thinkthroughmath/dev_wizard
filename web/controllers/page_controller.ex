@@ -18,7 +18,7 @@ defmodule DevWizard.PageController do
     user = get_session(conn, :current_user)
 
     todo = gh_client(conn)
-      |> GithubGateway.Client.needs_code_review
+      |> GithubGateway.needs_code_review
       |> IssueWorkflow.pr_todo(user[:login])
 
     conn
@@ -33,7 +33,7 @@ defmodule DevWizard.PageController do
     user = get_session(conn, :current_user)
 
     needs_review = gh_client(conn)
-      |> GithubGateway.Client.needs_code_review
+      |> GithubGateway.needs_code_review
 
     conn
       |> assign(:current_user, user)
@@ -50,10 +50,10 @@ defmodule DevWizard.PageController do
 
   def oauth_callback(conn, %{"code" => code}) do
     gh_client = gh_auth_client
-      |> GithubAuth.get_token_from_callback_code(code)
-      |> GithubGateway.Client.new
+    |> GithubAuth.get_token_from_callback_code(code)
+    |> GithubGateway.new
 
-    is_member = GithubGateway.Client.member_of_organization?(gh_client)
+    is_member = GithubGateway.member_of_organization?(gh_client)
 
     if is_member do
       conn
@@ -76,7 +76,7 @@ defmodule DevWizard.PageController do
   end
 
   defp gh_client(conn) do
-    GithubGateway.Client.new(get_session(conn, :access_token))
+    GithubGateway.new(get_session(conn, :access_token))
   end
 
   defp gh_auth_client do
