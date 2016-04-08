@@ -37,8 +37,10 @@ GitHub application keys.
 The file should contain the following lines:
 
 ```
-export GH_CLIENT_ID=<YOUR GITHUB CLIENT ID>
-export GH_CLIENT_SECRET=<YOUR GITHUB CLIENT SECRET>
+export DW_GH_CLIENT_ID=<YOUR GITHUB CLIENT ID>
+export DW_GH_CLIENT_SECRET=<YOUR GITHUB CLIENT SECRET>
+export DW_GH_ORGANIZATION=<YOUR GITHUB ORGANIZATION>
+export DW_GH_REPOSITORIES=<YOUR GITHUB REPOSITORIES>
 ```
 
 Note: Replace `<...>` with your GitHub client ID and client secret key.
