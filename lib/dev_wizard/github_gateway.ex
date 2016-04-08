@@ -49,6 +49,10 @@ defmodule DevWizard.GithubGateway do
     repos_issues_and_comments(gw, %{labels: "Needs Code Review"})
   end
 
+  def needs_qa(gw) do
+    repos_issues_and_comments(gw, %{labels: "Needs QA"})
+  end
+
   defp repos_issues_and_comments(gw, filters) do
     org   = gw.settings[:organization]
     repos = gw.settings[:repositories]
