@@ -35,7 +35,7 @@
 
       <%= if @current_user do %>
       <div>
-        <a href="/dash">dash</a> | <a href="/needs_review">Needs Review</a>
+        <a href="/dash">dash</a> | <a href="/needs_review">Needs Review</a> | <a href="/needs_qa">Needs QA</a>
       </div>
       <% end %>
 

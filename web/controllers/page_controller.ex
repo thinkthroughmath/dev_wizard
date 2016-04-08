@@ -41,6 +41,20 @@ defmodule DevWizard.PageController do
       |> render("needs_review.html")
   end
 
+  def needs_qa(conn, _params) do
+    require_login!(conn)
+
+    user = get_session(conn, :current_user)
+
+    needs_qa = gh_client(conn)
+    |> GithubGateway.needs_qa
+
+    conn
+    |> assign(:current_user, user)
+    |> assign(:needs_review, needs_qa)
+    |> render("needs_review.html")
+  end
+
   def login(conn, _params) do
     url = gh_auth_client
       |> GithubAuth.authorize_url
