@@ -40,8 +40,8 @@ defmodule DevWizard.PageController do
     conn
       |> assign(:current_user, user)
       |> assign(:page_title, page_title)
-      |> assign(:needs_review, needs_review)
-      |> render("needs_review.html")
+      |> assign(:issue_list, needs_review)
+      |> render("issue_list.html")
   end
 
   def needs_qa(conn, _params) do
@@ -57,8 +57,8 @@ defmodule DevWizard.PageController do
     conn
     |> assign(:current_user, user)
     |> assign(:page_title, page_title)
-    |> assign(:needs_review, needs_qa)
-    |> render("needs_review.html")
+    |> assign(:issue_list, needs_qa)
+    |> render("issue_list.html")
   end
 
   def login(conn, _params) do
