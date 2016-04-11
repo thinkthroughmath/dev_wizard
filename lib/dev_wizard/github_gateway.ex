@@ -61,7 +61,7 @@ defmodule DevWizard.GithubGateway do
       fn(repo, acc) ->
 
         issues = Cache.fetch_or_create(
-          {:issues, repo},
+          {:issues, repo, filters},
           60 * 10, # 10 minutes
           fn ->
             @github_api.filter_issues(
