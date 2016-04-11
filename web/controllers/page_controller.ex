@@ -32,11 +32,14 @@ defmodule DevWizard.PageController do
 
     user = get_session(conn, :current_user)
 
+    page_title = "Needs Review"
+
     needs_review = gh_client(conn)
       |> GithubGateway.needs_code_review
 
     conn
       |> assign(:current_user, user)
+      |> assign(:page_title, page_title)
       |> assign(:needs_review, needs_review)
       |> render("needs_review.html")
   end
@@ -46,11 +49,14 @@ defmodule DevWizard.PageController do
 
     user = get_session(conn, :current_user)
 
+    page_title = "Needs QA"
+
     needs_qa = gh_client(conn)
     |> GithubGateway.needs_qa
 
     conn
     |> assign(:current_user, user)
+    |> assign(:page_title, page_title)
     |> assign(:needs_review, needs_qa)
     |> render("needs_review.html")
   end

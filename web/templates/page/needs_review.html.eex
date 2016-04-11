@@ -1,4 +1,4 @@
-<h1>Needs Review</h1>
+<h1><%= @page_title %></h1>
 <%= for {repo, prs} <- @needs_review do %>
   <%= if length(prs) > 0 do %>
     <h2><%= repo %></h2>
