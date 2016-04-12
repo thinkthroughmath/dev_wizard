@@ -1,5 +1,5 @@
-<h1>Needs Review</h1>
-<%= for {repo, prs} <- @needs_review do %>
+<h1><%= @page_title %></h1>
+<%= for {repo, prs} <- @issue_list do %>
   <%= if length(prs) > 0 do %>
     <h2><%= repo %></h2>
     <table border="1">
