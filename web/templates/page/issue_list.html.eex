@@ -7,6 +7,7 @@
         <th>#</th>
         <th>Title</th>
         <th>Author</th>
+        <th>Assignee</th>
         <th>Updated At</th>
         <th>Created At</th>
       </tr>
@@ -22,6 +23,9 @@
           </td>
           <td>
             <%= pr["user"]["login"] %>
+          </td>
+          <td>
+            <%= pr["assignee"]["login"] %>
           </td>
           <td>
             <%= pr["updated_at"] %>
