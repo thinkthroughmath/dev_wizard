@@ -72,25 +72,30 @@ defmodule DevWizard.GithubGateway do
             )
           end)
 
-        issues_with_comments = Enum.map(issues,
-          fn(issue) ->
-            comments =
-              Cache.fetch_or_create(
-                {:issue_comments, repo, issue["number"]},
-                60 * 10, # 10 minutes
-                fn ->
-                  @github_api.comments(
-                    gw.github_client,
-                    org,
-                    repo,
-                    issue["number"]
-                  )
-                end)
 
-            Map.put(issue,
-                    "comments",
-                    comments)
-          end)
+        issues_with_comments =
+          case issues do
+            {404, _} -> []
+            issues   -> Enum.map(issues,
+                         fn(issue) ->
+                           comments =
+                             Cache.fetch_or_create(
+                               {:issue_comments, repo, issue["number"]},
+                               60 * 10, # 10 minutes
+                               fn ->
+                                 @github_api.comments(
+                                   gw.github_client,
+                                   org,
+                                   repo,
+                                   issue["number"]
+                                 )
+                               end)
+
+                           Map.put(issue,
+                                   "comments",
+                                   comments)
+                          end)
+          end
 
         Logger.debug "GithubGateway/repo_issues_and_comments/issues_for repo: #{repo}, count: #{Enum.count issues_with_comments}, filters: #{inspect filters}"
 
