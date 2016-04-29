@@ -16,7 +16,7 @@ defmodule DevWizard.IssueWorkflow do
 
     issue_has_assignment? = fn(issue)->
       Enum.find(
-        issue["comments"],
+        issue.comments,
         comment_that_matches_current_user
       )
     end
@@ -25,7 +25,7 @@ defmodule DevWizard.IssueWorkflow do
     |> Enum.filter(issue_has_assignment?)
     |> Enum.map(fn(issue) ->
       state = determine_review_state(issue, user)
-      Map.put(issue, "review_state", state)
+      %{ issue | :review_state => state }
     end)
   end
 
@@ -40,7 +40,7 @@ defmodule DevWizard.IssueWorkflow do
   end
 
   defp lgtm_comments(issue, user) do
-    issue["comments"]
+    issue.comments
     |> Enum.filter(fn(comment) ->
       Regex.run(~r/LGTM/, comment["body"]) &&
         comment["user"]["login"] == user

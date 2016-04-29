@@ -5,9 +5,9 @@
     <%= if length(prs) > 0 do %>
       <h2><%= repo %></h2>
       <%= for pr <- prs do %>
-        <% title = pr["title"] %>
+        <% title = pr.title %>
         <li>
-          <a target='_blank' href='<%= pr["html_url"] %>'>
+          <a target='_blank' href='<%= pr.html_url %>'>
             <%= title %>
           </a>
           <br/>

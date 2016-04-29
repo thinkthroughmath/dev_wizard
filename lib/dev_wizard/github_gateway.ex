@@ -1,7 +1,6 @@
 defmodule DevWizard.GithubGateway do
   require Logger
   alias DevWizard.GithubGateway.Cache
-
   @github_api Application.get_env(:dev_wizard, :github_api)
 
   defstruct(user: nil,
@@ -59,7 +58,6 @@ defmodule DevWizard.GithubGateway do
 
     Enum.reduce(repos, %{},
       fn(repo, acc) ->
-
         issues = Cache.fetch_or_create(
           {:issues, repo, filters},
           60 * 10, # 10 minutes
@@ -72,7 +70,6 @@ defmodule DevWizard.GithubGateway do
             )
           end)
 
-
         issues_with_comments =
           case issues do
             {404, _} -> []
@@ -80,23 +77,20 @@ defmodule DevWizard.GithubGateway do
                          fn(issue) ->
                            comments =
                              Cache.fetch_or_create(
-                               {:issue_comments, repo, issue["number"]},
+                               {:issue_comments, repo, issue.number},
                                60 * 10, # 10 minutes
                                fn ->
                                  @github_api.comments(
                                    gw.github_client,
                                    org,
                                    repo,
-                                   issue["number"]
+                                   issue.number
                                  )
                                end)
 
-                           Map.put(issue,
-                                   "comments",
-                                   comments)
-                          end)
+                           %{ issue | :comments => comments }
+                         end)
           end
-
         Logger.debug "GithubGateway/repo_issues_and_comments/issues_for repo: #{repo}, count: #{Enum.count issues_with_comments}, filters: #{inspect filters}"
 
         Map.put(acc,

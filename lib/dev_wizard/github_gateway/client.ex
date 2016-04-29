@@ -1,6 +1,7 @@
 defmodule DevWizard.GithubGateway.Client do
   require Logger
   alias DevWizard.GithubGateway.Cache
+  alias DevWizard.GithubGateway.Issue
 
   defstruct(tentacat: nil)
 
@@ -23,7 +24,10 @@ defmodule DevWizard.GithubGateway.Client do
   end
 
   def filter_issues(client, org, repo, filters) do
-    Tentacat.Issues.filter(org, repo, filters, client.tentacat)
+    issues = Tentacat.Issues.filter(org, repo, filters, client.tentacat)
+    issues |> Enum.map(fn(issue)->
+      issue |> Issue.to_struct
+    end)
   end
 
   def comments(client, org, repo, issue)  do
