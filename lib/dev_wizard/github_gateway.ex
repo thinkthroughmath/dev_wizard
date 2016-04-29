@@ -1,6 +1,9 @@
 defmodule DevWizard.GithubGateway do
   require Logger
   alias DevWizard.GithubGateway.Cache
+  alias DevWizard.GithubGateway.Issue
+  alias DevWizard.GithubGateway.Comment
+
   @github_api Application.get_env(:dev_wizard, :github_api)
 
   defstruct(user: nil,
@@ -87,8 +90,8 @@ defmodule DevWizard.GithubGateway do
                                    issue.number
                                  )
                                end)
-
-                           %{ issue | :comments => comments }
+                           converted = comments |> Enum.map(&Comment.to_struct/1)
+                           %{ issue | :comments => converted }
                          end)
           end
         Logger.debug "GithubGateway/repo_issues_and_comments/issues_for repo: #{repo}, count: #{Enum.count issues_with_comments}, filters: #{inspect filters}"

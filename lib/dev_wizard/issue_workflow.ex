@@ -42,8 +42,8 @@ defmodule DevWizard.IssueWorkflow do
   defp lgtm_comments(issue, user) do
     issue.comments
     |> Enum.filter(fn(comment) ->
-      Regex.run(~r/LGTM/, comment["body"]) &&
-        comment["user"]["login"] == user
+      Regex.run(~r/LGTM/, comment.body) &&
+        comment.user.login == user
     end)
   end
 
@@ -61,7 +61,7 @@ defmodule DevWizard.IssueWorkflow do
   end
 
   defp parsed_json_payload(comment) do
-    match_info = Regex.run @json_payload_regex, comment["body"]
+    match_info = Regex.run @json_payload_regex, comment.body
 
     if match_info do
       json_payload = Poison.decode!(Enum.at(match_info, 1))
