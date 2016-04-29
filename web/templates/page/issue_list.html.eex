@@ -1,44 +1,52 @@
 <h1><%= @page_title %></h1>
 <%= for {repo, prs} <- @issue_list do %>
-  <%= if length(prs) > 0 do %>
-    <h2><%= repo %></h2>
-    <table border="1">
-      <tr>
-        <th>#</th>
-        <th>Title</th>
-        <th>Author</th>
-        <th>Assignee</th>
-        <th>Updated At</th>
-        <th>Created At</th>
-      </tr>
-      <%= for pr <- prs do %>
-        <tr>
-          <td>
-            <%= pr.number %>
-          </td>
-          <td>
-            <a target='_blank' href='<%= pr.html_url %>'>
-              <%= pr.title %>
-            </a>
-          </td>
-          <td>
-            <img src='<%= pr.user.avatar_url %>' height=20 width=20 >
-              <%= pr.user.login %>
-          </td>
-          <td>
-            <%= if pr.assignee do %>
-              <img src='<%= pr.assignee.avatar_url %>' height=20 width=20 >
-                <%= pr.assignee.login %>
-            <% end %>
-          </td>
-          <td>
-            <%= pr.updated_at %>
-          </td>
-          <td>
-            <%= pr.created_at %>
-          </td>
-        </tr>
-      <% end %>
-    </table>
-  <% end %>
+    <%= if length(prs) > 0 do %>
+        <h2><%= repo %></h2>
+        <table class="ui celled table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Assignee</th>
+                    <th>Updated At</th>
+                    <th>Created At</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%= for pr <- prs do %>
+                    <tr>
+                        <td>
+                            <%= pr.number %>
+                        </td>
+                        <td>
+                            <a target='_blank' href='<%= pr.html_url %>'>
+                                <%= pr.title %>
+                            </a>
+                        </td>
+                        <td>
+                            <div class="ui teal image label">
+                                <img src='<%= pr.user.avatar_url %>' height=20 width=20 >
+                                <%= pr.user.login %>
+                            </div>
+                        </td>
+                        <td>
+                            <%= if pr.assignee do %>
+                                <div class="ui teal image label">
+                                    <img src='<%= pr.assignee.avatar_url %>' height=20 width=20 >
+                                    <%= pr.assignee.login %>
+                                </div>
+                            <% end %>
+                        </td>
+                        <td>
+                            <%= pr.updated_at %>
+                        </td>
+                        <td>
+                            <%= pr.created_at %>
+                        </td>
+                    </tr>
+                <% end %>
+            </tbody>
+        </table>
+    <% end %>
 <% end %>

@@ -1,50 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
 
-    <title>Dev Wizard - It's a Real Wizard!</title>
-    <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
-  </head>
+        <title>Dev Wizard - It's a Real Wizard!</title>
+        <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/semantic.min.css">
+    </head>
 
-  <body>
-    <div class="container" role="main">
-      <div class="header clearfix">
-        <nav>
-          <ul class="nav nav-pills pull-right">
-            <%= if @current_user do %>
-            <li>
-              <img src="<%= @current_user.avatar %>" class="img-circle index--avatar"/>
-            </li>
-            <% else %>
-            <li> <a href="/login">Login with github</a> </li>
-            <% end %>
-          </ul>
-        </nav>
+    <body>
+        <div class="ui container">
+            <div class="ui four inverted menu ">
+                <%= if @current_user do %>
+                    <img src="<%= @current_user.avatar %>" class="ui tiny circular image item"/>
+                <% else %>
+                    <a href="/login">Login with github</a>
+                <% end %>
 
-        <img src="images/dev-wizard-winters-small.png" class="img-circle header--winters"/>
-        <div class="header--title">
-          <h2>Dev Wizard</h2>
-          <p class="lead">It's a real wizard.</p>
-        </div>
-      </div>
+                <img src="images/dev-wizard-winters-small.png" class="ui tiny circular image item"/>
+                <div class="item">
+                    <h2>Dev Wizard</h2>
+                    <p>It's a real wizard.</p>
+                </div>
+                <%= if @current_user do %>
+                    <div class="ui simple dropdown item">
+                        MAKE IT GO <i class="dropdown icon"></i>
+                        <div class="menu">
+                            <a href="/dash" class="item">Dash</a>
+                            <a href="/needs_review" class="item">Needs Review</a>
+                            <a href="/needs_qa" class="item">Needs QA</a>
+                        </div>
+                    </div>
+                <% end %>
+            </div>
+            <div class="ui container">
+                <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
+                <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
 
-      <%= if @current_user do %>
-      <div>
-        <a href="/dash">dash</a> | <a href="/needs_review">Needs Review</a> | <a href="/needs_qa">Needs QA</a>
-      </div>
-      <% end %>
-
-      <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
-      <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
-
-      <%= render @view_module, @view_template, assigns %>
-
-    </div> <!-- /container -->
-    <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
-  </body>
+                <%= render @view_module, @view_template, assigns %>
+            </div>
+        </div> <!-- /container -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/semantic.min.js"></script>
+        <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
+    </body>
 </html>
