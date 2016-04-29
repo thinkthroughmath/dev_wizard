@@ -1,5 +1,6 @@
 defmodule DevWizard.GithubGateway.Issue do
   alias DevWizard.GithubGateway.User
+  alias DevWizard.GithubGateway.Comment
 
   defstruct(
     assignee:       nil,
@@ -32,9 +33,18 @@ defmodule DevWizard.GithubGateway.Issue do
 
   def to_struct(values) do
     raw = new(values)
+
     %{ raw |
        :user     => User.to_struct(raw.user),
-       :assignee => User.to_struct(raw.assignee)
+       :assignee => User.to_struct(raw.assignee),
+       :comments => get_comments(raw.comments)
      }
   end
+
+  # So, goofy alert
+  # we want to add comments to the issue struct. However, because the
+  # comments in the github API refers to the *number* of comments,
+  # we need to make allowances for that state.
+  defp get_comments(value) when is_number(value), do: []
+  defp get_comments(value) when is_list(value), do: Enum.map(value, &Comment.to_struct/1)
 end

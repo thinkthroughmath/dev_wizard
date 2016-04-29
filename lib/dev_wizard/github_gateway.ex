@@ -90,6 +90,7 @@ defmodule DevWizard.GithubGateway do
                                    issue.number
                                  )
                                end)
+
                            converted = comments |> Enum.map(&Comment.to_struct/1)
                            %{ issue | :comments => converted }
                          end)
