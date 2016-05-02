@@ -1,4 +1,6 @@
 language: elixir
+elixir:
+  - 1.2.1
 deploy:
   provider: heroku
   app: dev-wizard-rc
