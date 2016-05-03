@@ -13,37 +13,56 @@
     </head>
 
     <body>
-        <div class="ui container">
-            <div class="ui four inverted menu ">
-                <%= if @current_user do %>
-                    <img src="<%= @current_user.avatar %>" class="ui tiny circular image item"/>
-                <% else %>
-                    <a href="/login">Login with github</a>
-                <% end %>
-
-                <img src="images/dev-wizard-winters-small.png" class="ui tiny circular image item"/>
-                <div class="item">
-                    <h2>Dev Wizard</h2>
-                    <p>It's a real wizard.</p>
+      <div class="ui inverted menu">
+        <div class="item">
+          <%= if @current_user do %>
+              <img src="<%= @current_user.avatar %>" class="ui tiny circular image"/>
+          <% else %>
+              <a href="/login">Login with github</a>
+          <% end %>
+        </div>
+        <div class="item">
+          <img src="images/dev-wizard-winters-small.png" class="ui tiny circular image item"/>
+        </div>
+        <div class="item">
+            <h2>Dev Wizard</h2>
+            <p>It's a real wizard.</p>
+        </div>
+        <%= if @current_user do %>
+            <div class="ui simple dropdown item">
+                MAKE IT GO <i class="dropdown icon"></i>
+                <div class="menu">
+                    <a href="/dash" class="item">Dash</a>
+                    <a href="/needs_review" class="item">Needs Review</a>
+                    <a href="/needs_qa" class="item">Needs QA</a>
                 </div>
-                <%= if @current_user do %>
-                    <div class="ui simple dropdown item">
-                        MAKE IT GO <i class="dropdown icon"></i>
-                        <div class="menu">
-                            <a href="/dash" class="item">Dash</a>
-                            <a href="/needs_review" class="item">Needs Review</a>
-                            <a href="/needs_qa" class="item">Needs QA</a>
-                        </div>
-                    </div>
-                <% end %>
             </div>
-            <div class="ui container">
-                <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
-                <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
-
-                <%= render @view_module, @view_template, assigns %>
+        <% end %>
+      </div>
+      <div class="ui grid container">
+        <div class="row">
+          <%
+          info = get_flash(@conn, :info)
+          error = get_flash(@conn, :error)
+          %>
+          <%= if info do %>
+            <div class="ui info message">
+              <i class="close icon"></i>
+              <%= info %>
             </div>
-        </div> <!-- /container -->
+          <% end %>
+          <%= if error do %>
+            <div class="ui negative message">
+              <i class="close icon"></i>
+              <%= error %>
+            </div>
+          <% end %>
+        </div>
+        <div class="row">
+          <%= render @view_module, @view_template, assigns %>
+        </div>
+      </div>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/semantic.min.js"></script>
         <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
     </body>

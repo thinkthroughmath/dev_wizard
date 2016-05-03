@@ -1,7 +1,10 @@
-<h1><%= @page_title %></h1>
+<h1 class="ui header"><%= @page_title %></h1>
 <%= for {repo, prs} <- @issue_list do %>
     <%= if length(prs) > 0 do %>
-        <h2><%= repo %></h2>
+      <div class="row">
+        <div class="ui horizontal divider">
+          <h2 class="ui header"><%= repo %></h2>
+        </div>
         <table class="ui celled table">
             <thead>
                 <tr>
@@ -17,25 +20,29 @@
                 <%= for pr <- prs do %>
                     <tr>
                         <td>
-                            <%= pr.number %>
-                        </td>
-                        <td>
-                            <a target='_blank' href='<%= pr.html_url %>'>
-                                <%= pr.title %>
-                            </a>
-                        </td>
-                        <td>
-                            <div class="ui teal image label">
-                                <img src='<%= pr.user.avatar_url %>' height=20 width=20 >
-                                <%= pr.user.login %>
+                            <div class="ui orange ribbon label">
+                              <%= pr.number %>
                             </div>
                         </td>
                         <td>
+                            <div class="ui small header">
+                              <a target='_blank' href='<%= pr.html_url %>'>
+                                <%= pr.title %>
+                              </a>
+                            </div>
+                        </td>
+                        <td>
+                          <a class="ui teal label">
+                            <img class="ui right spaced avatar image" src="<%= pr.user.avatar_url %>">
+                            <%= pr.user.login %>
+                          </a>
+                        </td>
+                        <td>
                             <%= if pr.assignee do %>
-                                <div class="ui teal image label">
-                                    <img src='<%= pr.assignee.avatar_url %>' height=20 width=20 >
-                                    <%= pr.assignee.login %>
-                                </div>
+                              <a class="ui teal label">
+                                <img class="ui right spaced avatar image" src="<%= pr.assignee.avatar_url %>">
+                                <%= pr.assignee.login %>
+                              </a>
                             <% end %>
                         </td>
                         <td>
@@ -48,5 +55,6 @@
                 <% end %>
             </tbody>
         </table>
+      </div>
     <% end %>
 <% end %>
