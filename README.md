@@ -79,3 +79,7 @@ deploy using the steps below, if required.
   * Mailing list: http://groups.google.com/group/phoenix-talk
   * Source: https://github.com/phoenixframework/phoenix
   * Deployment: http://www.phoenixframework.org/docs/deployment
+
+# More
+
+Ask in issues
