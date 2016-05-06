@@ -1,6 +1,5 @@
 defmodule DevWizard.GithubGateway.Issue do
-  alias DevWizard.GithubGateway.User
-  alias DevWizard.GithubGateway.Comment
+  alias DevWizard.GithubGateway.{User, Comment, Milestone}
 
   defstruct(
     assignee:       nil,
@@ -37,7 +36,8 @@ defmodule DevWizard.GithubGateway.Issue do
     %{ raw |
        :user     => User.to_struct(raw.user),
        :assignee => User.to_struct(raw.assignee),
-       :comments => get_comments(raw.comments)
+       :comments => get_comments(raw.comments),
+       :milestone => Milestone.to_struct(raw.milestone)
      }
   end
 

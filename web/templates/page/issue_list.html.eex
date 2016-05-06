@@ -9,6 +9,7 @@
             <thead>
                 <tr>
                     <th>#</th>
+                    <th>Milestone</th>
                     <th>Title</th>
                     <th>Author</th>
                     <th>Assignee</th>
@@ -22,6 +23,15 @@
                         <td>
                             <div class="ui orange ribbon label">
                               <%= pr.number %>
+                            </div>
+                        </td>
+                        <td>
+                          <div class="ui small header">
+                            <%= if pr.milestone do %>
+                              <%= pr.milestone.title %>
+                            <%= else %>
+                               N/A
+                            <%= end %>
                             </div>
                         </td>
                         <td>
