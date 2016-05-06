@@ -1,69 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="">
-        <meta name="author" content="">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-        <title>Dev Wizard - It's a Real Wizard!</title>
-        <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/semantic.min.css">
-    </head>
+    <title>Dev Wizard - It's a Real Wizard!</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/semantic.min.css">
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
+  </head>
 
-    <body>
-      <div class="ui inverted menu">
-        <div class="item">
-          <%= if @current_user do %>
-              <img src="<%= @current_user.avatar %>" class="ui tiny circular image"/>
-          <% else %>
-              <a href="/login">Login with github</a>
-          <% end %>
+  <body>
+    <div class="ui inverted menu wizmenu container">
+      <h2 class="ui image header item">
+        <img src="images/dev-wizard-winters-small.png" class="ui mini circular image"/>
+        <div class="content">
+          Dev Wizard
+          <div class="sub header pink ui">
+            It's a real wizard.
+          </div>
         </div>
-        <div class="item">
-          <img src="images/dev-wizard-winters-small.png" class="ui tiny circular image item"/>
-        </div>
-        <div class="item">
-            <h2>Dev Wizard</h2>
-            <p>It's a real wizard.</p>
-        </div>
+      </h2>
+      <div class="header item right">
         <%= if @current_user do %>
-            <div class="ui simple dropdown item">
-                MAKE IT GO <i class="dropdown icon"></i>
-                <div class="menu">
-                    <a href="/dash" class="item">Dash</a>
-                    <a href="/needs_review" class="item">Needs Review</a>
-                    <a href="/needs_qa" class="item">Needs QA</a>
-                </div>
+          <img src="<%= @current_user.avatar %>" class="ui avatar image"/>
+          <div class="ui simple dropdown item">
+            <div class="content">
+              Make it go <i class="dropdown icon"></i>
             </div>
+            <div class="menu">
+              <a href="/dash" class="item">Dash</a>
+              <a href="/needs_review" class="item">Needs Review</a>
+              <a href="/needs_qa" class="item">Needs QA</a>
+            </div>
+          </div>
+        <% else %>
+          <div class="item">
+            <a href="/login">Login with github</a>
+          </div>
         <% end %>
       </div>
-      <div class="ui grid container">
-        <div class="row">
-          <%
-          info = get_flash(@conn, :info)
-          error = get_flash(@conn, :error)
-          %>
-          <%= if info do %>
-            <div class="ui info message">
-              <i class="close icon"></i>
-              <%= info %>
-            </div>
-          <% end %>
-          <%= if error do %>
-            <div class="ui negative message">
-              <i class="close icon"></i>
-              <%= error %>
-            </div>
-          <% end %>
-        </div>
-        <div class="row">
-          <%= render @view_module, @view_template, assigns %>
-        </div>
+    </div>
+    <div class="ui container">
+      <div class="row">
+        <%
+        info = get_flash(@conn, :info)
+        error = get_flash(@conn, :error)
+        %>
+        <%= if info do %>
+          <div class="ui info message">
+            <i class="close icon"></i>
+            <%= info %>
+          </div>
+        <% end %>
+        <%= if error do %>
+          <div class="ui negative message">
+            <i class="close icon"></i>
+            <%= error %>
+          </div>
+        <% end %>
       </div>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/semantic.min.js"></script>
-        <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
-    </body>
+      <div class="row">
+        <%= render @view_module, @view_template, assigns %>
+      </div>
+    </div>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/semantic.min.js"></script>
+    <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
+  </body>
 </html>
