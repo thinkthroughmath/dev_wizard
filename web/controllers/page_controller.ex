@@ -15,15 +15,20 @@ defmodule DevWizard.PageController do
   def dash(conn, _params) do
     require_login!(conn)
 
-    user = get_session(conn, :current_user)
 
-    todo = gh_client(conn)
+    user       = get_session(conn, :current_user)
+    gateway    = gh_client(conn)
+    storyboard = gateway |> GithubGateway.storyboard_issues
+
+    issues =
+      gateway
       |> GithubGateway.needs_code_review
       |> IssueWorkflow.pr_todo(user[:login])
+      |> IssueWorkflow.determine_milestone(storyboard)
 
     conn
       |> assign(:current_user, user)
-      |> assign(:prs_todo, todo)
+      |> assign(:prs_todo, issues)
       |> render("dash.html")
   end
 
@@ -34,13 +39,18 @@ defmodule DevWizard.PageController do
 
     page_title = "Needs Review"
 
-    needs_review = gh_client(conn)
+    gateway    = gh_client(conn)
+    storyboard = gateway |> GithubGateway.storyboard_issues
+
+    issues =
+      gateway
       |> GithubGateway.needs_code_review
+      |> IssueWorkflow.determine_milestone(storyboard)
 
     conn
       |> assign(:current_user, user)
       |> assign(:page_title, page_title)
-      |> assign(:issue_list, needs_review)
+      |> assign(:issue_list, issues)
       |> render("issue_list.html")
   end
 
@@ -51,13 +61,18 @@ defmodule DevWizard.PageController do
 
     page_title = "Needs QA"
 
-    needs_qa = gh_client(conn)
-    |> GithubGateway.needs_qa
+    gateway    = gh_client(conn)
+    storyboard = gateway |> GithubGateway.storyboard_issues
+
+    issues =
+      gateway
+      |> GithubGateway.needs_qa
+      |> IssueWorkflow.determine_milestone(storyboard)
 
     conn
     |> assign(:current_user, user)
     |> assign(:page_title, page_title)
-    |> assign(:issue_list, needs_qa)
+    |> assign(:issue_list, issues)
     |> render("issue_list.html")
   end
 

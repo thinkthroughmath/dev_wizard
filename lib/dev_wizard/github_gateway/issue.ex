@@ -1,6 +1,8 @@
 defmodule DevWizard.GithubGateway.Issue do
   alias DevWizard.GithubGateway.{User, Comment, Milestone}
 
+  @linked_issue_regex ~r/(closes|connects)\s+thinkthroughmath\/storyboard#([0-9]+)/i
+
   defstruct(
     assignee:       nil,
     body:           nil,
@@ -47,4 +49,13 @@ defmodule DevWizard.GithubGateway.Issue do
   # we need to make allowances for that state.
   defp get_comments(value) when is_number(value), do: []
   defp get_comments(value) when is_list(value), do: Enum.map(value, &Comment.to_struct/1)
+
+  def linked_issue_number(issue) do
+    matches = Regex.run(@linked_issue_regex, issue.body)
+
+    if matches do
+      {number, _} = List.last(matches) |> Integer.parse
+      number
+    end
+  end
 end

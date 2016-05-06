@@ -1,12 +1,35 @@
 defmodule DevWizard.IssueWorkflow do
   @json_payload_regex ~r/JSON_PAYLOAD([\s\S]*?)END_JSON_PAYLOAD/
 
+  alias DevWizard.GithubGateway.Issue
+
   def pr_todo(repos_with_issues_with_comments, user) do
     repos_with_issues_with_comments
     |> Enum.map(fn {repo, issues} ->
       {repo, assigned_prs_for_repo(repo, issues, user)}
     end)
     |> Enum.into(%{})
+  end
+
+  def determine_milestone(issue = %Issue{}, storyboard_issues) do
+    linked_issue_number = Issue.linked_issue_number(issue)
+
+    linked_issue =
+      linked_issue_number &&
+      Enum.find(storyboard_issues, &(&1.number == linked_issue_number))
+
+    if linked_issue do
+      %{issue | milestone: linked_issue.milestone }
+    else
+      issue
+    end
+  end
+
+  def determine_milestone(repos_with_issues, storyboard_issues) do
+    Enum.reduce(repos_with_issues, %{}, fn({repo, issues}, acc) ->
+      issues = Enum.map(issues, &(determine_milestone(&1, storyboard_issues)))
+      Map.put(acc, repo, issues)
+    end)
   end
 
   defp assigned_prs_for_repo(repo, issues, user) do
