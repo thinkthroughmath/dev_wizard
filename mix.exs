@@ -41,7 +41,7 @@ defmodule DevWizard.Mixfile do
      {:oauth2, "~> 0.5"},
      {:tentacat, "~> 0.5.0"},
      {:exactor, "~> 2.2.0"},
-     {:timex, "~> 1.0"},
+     {:timex, "~> 2.1.0"},
      {:exconstructor, "~> 1.0.0"}
     ]
   end
