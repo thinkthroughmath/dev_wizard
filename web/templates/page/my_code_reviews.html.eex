@@ -1,19 +1,76 @@
-<h1>My Code Reviews</h1>
+<h1 class="ui header">My Code Reviews</h1>
 
-<ol>
-  <%= for {repo, prs} <- @prs_todo do %>
-    <%= if length(prs) > 0 do %>
-      <h2><%= repo %></h2>
-      <%= for pr <- prs do %>
-        <% title = pr.title %>
-        <li>
-          <a target='_blank' href='<%= pr.html_url %>'>
-            <%= title %>
-          </a>
-          <br/>
-          <%= review_state pr %>
-        </li>
-      <% end %>
+<%= for {repo, prs} <- @prs_todo do %>
+  <%= if length(prs) > 0 do %>
+    <div class="row">
+      <div class="ui horizontal divider">
+        <h2 class="ui header"><%= repo %></h2>
+      </div>
+      <table class="ui celled table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Pull Request</th>
+            <th>Milestone</th>
+            <th>Status</th>
+            <th>Author</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= for pr <- prs do %>
+            <%= if pr.review_state == :signed_off do %>
+              <tr class="disabled">
+            <%= else %>
+              <tr>
+            <%= end  %>
+
+              <td>
+                <div class="ui orange ribbon label">
+                  <%= pr.number %>
+                </div>
+              </td>
+
+              <td>
+                <h3 class="ui aligned header">
+                  <a target='_blank' href='<%= pr.html_url %>'>
+                    <%= pr.title %>
+                  </a>
+                </h3>
+              </td>
+
+              <td>
+                <%= if pr.milestone do %>
+                  <div class="ui small label">
+                    <%= pr.milestone.title %>
+                  </div>
+                <%= end %>
+              </td>
+
+              <td>
+                <%= if pr.review_state == :signed_off do %>
+                  <div class="ui small label green">
+                    Passed Code Review
+                  </div>
+                <%= end %>
+
+                <%= if pr.review_state == :not_signed_off do %>
+                  <div class="ui small label blue">
+                     Needs Code Review
+                  </div>
+                <%= end %>
+              </td>
+
+              <td>
+                <a class="ui teal label" target="#">
+                  <img class="ui right spaced avatar image" src="<%= pr.user.avatar_url %>">
+                  <%= pr.user.login %>
+                </a>
+              </td>
+
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
     <% end %>
-  <% end %>
-</ol>
+<% end %>
