@@ -13,8 +13,7 @@
                     <th>Title</th>
                     <th>Author</th>
                     <th>Assignee</th>
-                    <th>Updated At</th>
-                    <th>Created At</th>
+                    <th>Activity</th>
                 </tr>
             </thead>
             <tbody>
@@ -26,7 +25,7 @@
                             </div>
                         </td>
                         <td>
-                          <div class="ui small header">
+                          <div class="ui large label">
                             <%= if pr.milestone do %>
                               <%= pr.milestone.title %>
                             <%= else %>
@@ -35,11 +34,11 @@
                             </div>
                         </td>
                         <td>
-                            <div class="ui small header">
+                            <h3>
                               <a target='_blank' href='<%= pr.html_url %>'>
                                 <%= pr.title %>
                               </a>
-                            </div>
+                            </h3>
                         </td>
                         <td>
                           <a class="ui teal label">
@@ -56,10 +55,9 @@
                             <% end %>
                         </td>
                         <td>
-                            <%= pr.updated_at %>
-                        </td>
-                        <td>
-                            <%= pr.created_at %>
+                          Updated: <%= days_since(pr.updated_at) %>
+                          <br>
+                          Opened: <%= days_since(pr.created_at) %>
                         </td>
                     </tr>
                 <% end %>
