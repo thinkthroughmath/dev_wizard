@@ -5,6 +5,7 @@ defmodule DevWizard.GithubGateway do
   alias DevWizard.GithubGateway.Comment
 
   @github_api Application.get_env(:dev_wizard, :github_api)
+  @cache_time 60 * 10 # 10 minutes
 
   defstruct(user: nil,
             token: nil,
@@ -32,7 +33,7 @@ defmodule DevWizard.GithubGateway do
 
     Cache.fetch_or_create(
       {:is_member, org, username},
-      60 * 10, # 10 minutes
+      @cache_time,
       fn ->
         @github_api.member_of_org?(
           gw.github_client,
@@ -88,7 +89,7 @@ defmodule DevWizard.GithubGateway do
   defp issues(gw, org, repo, filters) do
     Cache.fetch_or_create(
       {:issues, repo, filters},
-      60 * 10, # 10 minutes
+      @cache_time,
       fn ->
         @github_api.filter_issues(
           gw.github_client,
@@ -102,7 +103,7 @@ defmodule DevWizard.GithubGateway do
   defp comments(gw, org, repo, issue) do
     comments = Cache.fetch_or_create(
       {:issue_comments, repo, issue.number},
-      60 * 10, # 10 minutes
+      @cache_time,
       fn ->
         @github_api.comments(
           gw.github_client,
