@@ -1,7 +1,7 @@
 defmodule DevWizard.GithubGateway.Issue do
   alias DevWizard.GithubGateway.{User, Comment, Milestone}
 
-  @linked_issue_regex ~r/(closes|connects)\s+thinkthroughmath\/storyboard#([0-9]+)/i
+  @linked_issue_regex ~r/(closes|connect|fixes)(s)?(ed)?( to)?\s+(thinkthroughmath\/storyboard#|(http|https):\/\/github.com\/thinkthroughmath\/storyboard\/issues\/)([0-9]+)/i
 
   defstruct(
     assignee:       nil,
