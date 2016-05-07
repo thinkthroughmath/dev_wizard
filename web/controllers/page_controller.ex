@@ -12,9 +12,8 @@ defmodule DevWizard.PageController do
     |> render("index.html")
   end
 
-  def dash(conn, _params) do
+  def my_code_reviews(conn, _params) do
     require_login!(conn)
-
 
     user       = get_session(conn, :current_user)
     gateway    = gh_client(conn)
@@ -29,7 +28,7 @@ defmodule DevWizard.PageController do
     conn
       |> assign(:current_user, user)
       |> assign(:prs_todo, issues)
-      |> render("dash.html")
+      |> render("my_code_reviews.html")
   end
 
   def needs_review(conn, _params) do
@@ -94,7 +93,7 @@ defmodule DevWizard.PageController do
       conn
         |> put_session(:current_user, gh_client.user)
         |> put_session(:access_token, gh_client.token)
-        |> redirect(to: "/dash")
+        |> redirect(to: "/my_code_reviews")
     else
       conn
         |> put_flash(:error, "You must be part of the #{gh_client.settings[:organization]} organization.")

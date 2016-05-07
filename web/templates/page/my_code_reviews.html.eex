@@ -1,4 +1,4 @@
-<h1>PRs TODO</h1>
+<h1>My Code Reviews</h1>
 
 <ol>
   <%= for {repo, prs} <- @prs_todo do %>
