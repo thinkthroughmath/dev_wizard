@@ -39,9 +39,9 @@ defmodule DevWizard.Mixfile do
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:cowboy, "~> 1.0"},
      {:oauth2, "~> 0.5"},
-     {:tentacat, "~> 0.3.1"},
+     {:tentacat, "~> 0.5.0"},
      {:exactor, "~> 2.2.0"},
-     {:timex, "~> 1.0"},
+     {:timex, "~> 2.1.0"},
      {:exconstructor, "~> 1.0.0"}
     ]
   end

@@ -1,5 +1,7 @@
 <%= if @current_user do %>
   <ul>
-    <li><a href="/dash">Dashboard</a></li>
+    <li><a href="/my_code_reviews">My Code Reviews</a></li>
+    <li><a href="/needs_review">Needs Code Review</a></li>
+    <li><a href="/needs_qa">Needs QA</a></li>
   </ul>
 <% end %>

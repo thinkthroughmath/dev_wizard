@@ -31,7 +31,7 @@
               Make it go <i class="dropdown icon"></i>
             </div>
             <div class="menu">
-              <a href="/dash" class="item">Dash</a>
+              <a href="/my_code_reviews" class="item">My Code Reviews</a>
               <a href="/needs_review" class="item">Needs Review</a>
               <a href="/needs_qa" class="item">Needs QA</a>
             </div>

@@ -5,6 +5,7 @@ defmodule DevWizard.GithubGateway do
   alias DevWizard.GithubGateway.Comment
 
   @github_api Application.get_env(:dev_wizard, :github_api)
+  @cache_time 60 * 10 # 10 minutes
 
   defstruct(user: nil,
             token: nil,
@@ -32,7 +33,7 @@ defmodule DevWizard.GithubGateway do
 
     Cache.fetch_or_create(
       {:is_member, org, username},
-      60 * 10, # 10 minutes
+      @cache_time,
       fn ->
         @github_api.member_of_org?(
           gw.github_client,
@@ -55,51 +56,64 @@ defmodule DevWizard.GithubGateway do
     repos_issues_and_comments(gw, %{labels: "Needs QA"})
   end
 
+  def storyboard_issues(gw) do
+    org  = gw.settings[:organization]
+    repo = gw.settings[:storyboard_repo]
+    issues(gw, org, repo, %{state: "open"})
+  end
+
   defp repos_issues_and_comments(gw, filters) do
     org   = gw.settings[:organization]
     repos = gw.settings[:repositories]
 
-    Enum.reduce(repos, %{},
-      fn(repo, acc) ->
-        issues = Cache.fetch_or_create(
-          {:issues, repo, filters},
-          60 * 10, # 10 minutes
-          fn ->
-            @github_api.filter_issues(
-              gw.github_client,
-              org,
-              repo,
-              filters
-            )
-          end)
+    Enum.reduce(repos, %{}, fn(repo, acc) ->
+      issues = issues_with_comments(gw, org, repo, filters)
+      Logger.debug "GithubGateway/repo_issues_and_comments/issues_for repo: #{repo}, count: #{Enum.count issues}, filters: #{inspect filters}"
+      Map.put(acc, repo, issues)
+    end)
+  end
 
-        issues_with_comments =
-          case issues do
-            {404, _} -> []
-            issues   -> Enum.map(issues,
-                         fn(issue) ->
-                           comments =
-                             Cache.fetch_or_create(
-                               {:issue_comments, repo, issue.number},
-                               60 * 10, # 10 minutes
-                               fn ->
-                                 @github_api.comments(
-                                   gw.github_client,
-                                   org,
-                                   repo,
-                                   issue.number
-                                 )
-                               end)
+  defp issues_with_comments(gw, org, repo, filters) do
+    issues = issues(gw, org, repo, filters)
 
-                           converted = comments |> Enum.map(&Comment.to_struct/1)
-                           %{ issue | :comments => converted }
-                         end)
-          end
-        Logger.debug "GithubGateway/repo_issues_and_comments/issues_for repo: #{repo}, count: #{Enum.count issues_with_comments}, filters: #{inspect filters}"
+    case issues do
+      {404, _} ->
+        []
+      issues   ->
+        Enum.map(issues, fn(issue) ->
+          %{ issue | :comments => comments(gw, org, repo, issue) }
+        end)
+    end
+  end
 
-        Map.put(acc,
-                repo,
-                issues_with_comments)
+  defp issues(gw, org, repo, filters) do
+    Cache.fetch_or_create(
+      {:issues, repo, filters},
+      @cache_time,
+      fn ->
+        @github_api.filter_issues(
+          gw.github_client,
+          org,
+          repo,
+          filters
+        )
       end)
+  end
+
+  defp comments(gw, org, repo, issue) do
+    comments = Cache.fetch_or_create(
+      {:issue_comments, repo, issue.number},
+      @cache_time,
+      fn ->
+        @github_api.comments(
+          gw.github_client,
+          org,
+          repo,
+          issue.number
+        )
+      end)
+
+    comments
+    |> Enum.map(&Comment.to_struct/1)
   end
 end

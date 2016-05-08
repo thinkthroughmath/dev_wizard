@@ -16,6 +16,7 @@ config :dev_wizard, DevWizard.Endpoint,
 
 config :dev_wizard, :github_settings,
   repositories:    (System.get_env("DW_GH_REPOSITORIES") || "") |> String.strip |> String.split(","),
+  storyboard_repo: String.strip(System.get_env("DW_GH_STORYBOARD_REPO") || ""),
   organization:    String.strip(System.get_env("DW_GH_ORGANIZATION") || ""),
   client_id:       String.strip(System.get_env("DW_GH_CLIENT_ID") || ""),
   client_secret:   String.strip(System.get_env("DW_GH_CLIENT_SECRET") || ""),

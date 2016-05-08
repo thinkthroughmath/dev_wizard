@@ -12,19 +12,23 @@ defmodule DevWizard.PageController do
     |> render("index.html")
   end
 
-  def dash(conn, _params) do
+  def my_code_reviews(conn, _params) do
     require_login!(conn)
 
-    user = get_session(conn, :current_user)
+    user       = get_session(conn, :current_user)
+    gateway    = gh_client(conn)
+    storyboard = gateway |> GithubGateway.storyboard_issues
 
-    todo = gh_client(conn)
+    issues =
+      gateway
       |> GithubGateway.needs_code_review
       |> IssueWorkflow.pr_todo(user[:login])
+      |> IssueWorkflow.determine_milestone(storyboard)
 
     conn
       |> assign(:current_user, user)
-      |> assign(:prs_todo, todo)
-      |> render("dash.html")
+      |> assign(:prs_todo, issues)
+      |> render("my_code_reviews.html")
   end
 
   def needs_review(conn, _params) do
@@ -34,13 +38,18 @@ defmodule DevWizard.PageController do
 
     page_title = "Needs Review"
 
-    needs_review = gh_client(conn)
+    gateway    = gh_client(conn)
+    storyboard = gateway |> GithubGateway.storyboard_issues
+
+    issues =
+      gateway
       |> GithubGateway.needs_code_review
+      |> IssueWorkflow.determine_milestone(storyboard)
 
     conn
       |> assign(:current_user, user)
       |> assign(:page_title, page_title)
-      |> assign(:issue_list, needs_review)
+      |> assign(:issue_list, issues)
       |> render("issue_list.html")
   end
 
@@ -51,13 +60,18 @@ defmodule DevWizard.PageController do
 
     page_title = "Needs QA"
 
-    needs_qa = gh_client(conn)
-    |> GithubGateway.needs_qa
+    gateway    = gh_client(conn)
+    storyboard = gateway |> GithubGateway.storyboard_issues
+
+    issues =
+      gateway
+      |> GithubGateway.needs_qa
+      |> IssueWorkflow.determine_milestone(storyboard)
 
     conn
     |> assign(:current_user, user)
     |> assign(:page_title, page_title)
-    |> assign(:issue_list, needs_qa)
+    |> assign(:issue_list, issues)
     |> render("issue_list.html")
   end
 
@@ -79,7 +93,7 @@ defmodule DevWizard.PageController do
       conn
         |> put_session(:current_user, gh_client.user)
         |> put_session(:access_token, gh_client.token)
-        |> redirect(to: "/dash")
+        |> redirect(to: "/my_code_reviews")
     else
       conn
         |> put_flash(:error, "You must be part of the #{gh_client.settings[:organization]} organization.")

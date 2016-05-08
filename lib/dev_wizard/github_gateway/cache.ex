@@ -14,8 +14,9 @@ defmodule DevWizard.GithubGateway.Cache do
       Logger.debug "Cache  hit: #{inspect key}"
       results = Map.get(state, key)
 
-      earliest_to_keep = Date.now(:secs) - time_to_keep
-      if results[:timestamp] < earliest_to_keep do
+      diff = Timex.DateTime.diff(Timex.DateTime.now, results[:timestamp], :seconds)
+
+      if diff > time_to_keep do
         Logger.debug "Cache entry expired: #{inspect key}"
         {new_cache, results} = set_cache_with_results(state, key, creator)
         set_and_reply(new_cache, results[:value])
@@ -31,8 +32,7 @@ defmodule DevWizard.GithubGateway.Cache do
 
   defp set_cache_with_results(state, key, creator) do
     creator_results = creator.()
-    time = Date.now(:secs)
-    results = %{:timestamp => time, :value => creator_results}
+    results = %{:timestamp => Timex.DateTime.now, :value => creator_results}
     new_cache = Map.put(state, key, results)
     {new_cache, results}
   end
