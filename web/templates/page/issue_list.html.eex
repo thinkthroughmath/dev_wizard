@@ -47,12 +47,13 @@
                           </a>
                         </td>
                         <td>
-                            <%= if pr.assignee do %>
-                              <a class="ui teal label">
-                                <img class="ui right spaced avatar image" src="<%= pr.assignee.avatar_url %>">
-                                <%= pr.assignee.login %>
-                              </a>
+                          <ul>
+                            <%= for assignee <- pr.assignees do %>
+                              <li>
+                                <%= assignee %>
+                              </li>
                             <% end %>
+                          </ul>
                         </td>
                         <td>
                           Updated: <%= days_since(pr.updated_at) %>

@@ -44,6 +44,7 @@ defmodule DevWizard.PageController do
     issues =
       gateway
       |> GithubGateway.needs_code_review
+      |> IssueWorkflow.determine_assignees
       |> IssueWorkflow.determine_milestone(storyboard)
 
     conn
@@ -66,6 +67,7 @@ defmodule DevWizard.PageController do
     issues =
       gateway
       |> GithubGateway.needs_qa
+      |> IssueWorkflow.determine_assignees
       |> IssueWorkflow.determine_milestone(storyboard)
 
     conn
