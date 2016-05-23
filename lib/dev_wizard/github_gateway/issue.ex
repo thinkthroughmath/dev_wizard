@@ -5,6 +5,7 @@ defmodule DevWizard.GithubGateway.Issue do
 
   defstruct(
     assignee:       nil,
+    assignees:      nil,
     body:           nil,
     closed_at:      nil,
     comments:       nil,

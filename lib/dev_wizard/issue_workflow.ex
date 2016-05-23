@@ -32,6 +32,32 @@ defmodule DevWizard.IssueWorkflow do
     end)
   end
 
+  def determine_assignees(issue = %Issue{}) do
+    comments = issue.comments
+    assignees = Enum.flat_map comments, fn(comment) ->
+      assignment_data = parsed_json_payload(comment)
+      case assignment_data do
+        {:some, data} ->
+          data["assignees"]
+        _ -> []
+      end
+    end
+
+    assignees = case issue.assignee do
+      nil      -> assignees
+      assignee -> assignees ++ [assignee.login]
+    end
+
+    %{issue | assignees: Enum.uniq assignees }
+  end
+
+  def determine_assignees(repos_with_issues) do
+    Enum.reduce(repos_with_issues, %{}, fn({repo, issues}, acc) ->
+      issues = Enum.map(issues, &(determine_assignees(&1)))
+      Map.put(acc, repo, issues)
+    end)
+  end
+
   defp assigned_prs_for_repo(repo, issues, user) do
     comment_that_matches_current_user = fn (comment)->
       comment_has_assigned_user?(comment, user)
