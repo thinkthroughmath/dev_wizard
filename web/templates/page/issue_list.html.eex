@@ -41,8 +41,8 @@
                             </h3>
                         </td>
                         <td>
-                          <a class="ui teal label">
-                            <img class="ui right spaced avatar image" src="<%= pr.user.avatar_url %>">
+                          <a class="ui teal image label">
+                            <img src="<%= pr.user.avatar_url %>">
                             <%= pr.user.login %>
                           </a>
                         </td>
