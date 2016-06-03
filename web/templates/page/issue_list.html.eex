@@ -47,13 +47,15 @@
                           </a>
                         </td>
                         <td>
-                          <ul>
+                          <div class="ui list">
                             <%= for assignee <- pr.assignees do %>
-                              <li>
-                                <%= assignee %>
-                              </li>
+                              <div class="item" >
+                                <div class="ui purple label">
+                                  <%= assignee %>
+                                </div>
+                              </div>
                             <% end %>
-                          </ul>
+                          </div>
                         </td>
                         <td>
                           Updated: <%= days_since(pr.updated_at) %>
