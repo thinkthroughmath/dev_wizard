@@ -41,19 +41,21 @@
                             </h3>
                         </td>
                         <td>
-                          <a class="ui teal label">
-                            <img class="ui right spaced avatar image" src="<%= pr.user.avatar_url %>">
+                          <a class="ui teal image label">
+                            <img src="<%= pr.user.avatar_url %>">
                             <%= pr.user.login %>
                           </a>
                         </td>
                         <td>
-                          <ul>
+                          <div class="ui list">
                             <%= for assignee <- pr.assignees do %>
-                              <li>
-                                <%= assignee %>
-                              </li>
+                              <div class="item" >
+                                <div class="ui purple label">
+                                  <%= assignee %>
+                                </div>
+                              </div>
                             <% end %>
-                          </ul>
+                          </div>
                         </td>
                         <td>
                           Updated: <%= days_since(pr.updated_at) %>
