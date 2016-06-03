@@ -20,7 +20,7 @@
                 <%= for pr <- prs do %>
                     <tr>
                         <td>
-                            <div class="ui orange ribbon label">
+                            <div class="ui orange big ribbon label">
                               <%= pr.number %>
                             </div>
                         </td>
