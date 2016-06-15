@@ -21,7 +21,7 @@ other supported platforms as well.
 
 ### Setup
 
-  1. Install Elixir: `$ brew install elixir`
+  1. Install Elixir: `$ brew update && brew install elixir`
   2. Install dependencies: `$ mix deps.get`
   3. Create and migrate your database: `$ mix ecto.create && mix ecto.migrate`
   4. Create a file called `secret_vars.sh`. See section on `secret_vars.sh` for details.
