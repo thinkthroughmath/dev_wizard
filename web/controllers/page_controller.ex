@@ -1,7 +1,6 @@
 defmodule DevWizard.PageController do
   use DevWizard.Web, :controller
 
-  alias Phoenix.Controller.Flash
   alias DevWizard.GithubAuth
   alias DevWizard.GithubGateway
   alias DevWizard.IssueWorkflow
