@@ -77,6 +77,29 @@ defmodule DevWizard.PageController do
     |> render("issue_list.html")
   end
 
+  def needs_release_notes(conn, _params) do
+    require_login!(conn)
+
+    user = get_session(conn, :current_user)
+
+    page_title = "Needs Release Notes"
+
+    gateway    = gh_client(conn)
+    storyboard = gateway |> GithubGateway.storyboard_issues
+
+    issues =
+      gateway
+      |> GithubGateway.needs_release_notes
+      |> IssueWorkflow.determine_assignees
+      |> IssueWorkflow.determine_milestone(storyboard)
+
+    conn
+    |> assign(:current_user, user)
+    |> assign(:page_title, page_title)
+    |> assign(:issue_list, issues)
+    |> render("issue_list.html")
+  end
+
   def login(conn, _params) do
     url = gh_auth_client
       |> GithubAuth.authorize_url

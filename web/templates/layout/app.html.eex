@@ -34,6 +34,7 @@
               <a href="/my_code_reviews" class="item">My Code Reviews</a>
               <a href="/needs_review" class="item">Needs Review</a>
               <a href="/needs_qa" class="item">Needs QA</a>
+              <a href="/needs_release_notes" class="item">Needs Release Notes</a>
             </div>
           </div>
         <% else %>

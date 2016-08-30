@@ -56,6 +56,10 @@ defmodule DevWizard.GithubGateway do
     repos_issues_and_comments(gw, %{labels: "Needs QA"})
   end
 
+  def needs_release_notes(gw) do
+    repos_issues_and_comments(gw, %{labels: "Needs Release Notes"})
+  end
+
   def storyboard_issues(gw) do
     org  = gw.settings[:organization]
     repo = gw.settings[:storyboard_repo]

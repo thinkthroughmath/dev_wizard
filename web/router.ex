@@ -22,6 +22,7 @@ defmodule DevWizard.Router do
     get "/my_code_reviews", PageController, :my_code_reviews
     get "/needs_review", PageController, :needs_review
     get "/needs_qa", PageController, :needs_qa
+    get "/needs_release_notes", PageController, :needs_release_notes
   end
 
   # Other scopes may use custom stacks.
