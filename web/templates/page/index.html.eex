@@ -3,5 +3,6 @@
     <li><a href="/my_code_reviews">My Code Reviews</a></li>
     <li><a href="/needs_review">Needs Code Review</a></li>
     <li><a href="/needs_qa">Needs QA</a></li>
+    <li><a href="/needs_release_notes">Needs Release Notes</a></li>
   </ul>
 <% end %>
