@@ -45,10 +45,14 @@ defmodule DevWizard.IssueWorkflow do
 
     assignees = case issue.assignee do
       nil      -> assignees
-      assignee -> assignees ++ [assignee.login]
+      assignee ->  [assignee.login]  ++ assignees
     end
 
-    %{issue | assignees: Enum.uniq assignees }
+
+    unique_assignees = assignees
+      |> Enum.uniq_by(&String.downcase/1)
+
+    %{issue | assignees: unique_assignees }
   end
 
   def determine_assignees(repos_with_issues) do
