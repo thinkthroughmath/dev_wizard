@@ -6,7 +6,7 @@ defmodule DevWizard.IssueWorkflow do
   def pr_todo(repos_with_issues_with_comments, user) do
     repos_with_issues_with_comments
     |> Enum.map(fn {repo, issues} ->
-      {repo, assigned_prs_for_repo(repo, issues, user)}
+      {repo, assigned_prs_from_issues(issues, user)}
     end)
     |> Enum.into(%{})
   end
@@ -45,10 +45,14 @@ defmodule DevWizard.IssueWorkflow do
 
     assignees = case issue.assignee do
       nil      -> assignees
-      assignee -> assignees ++ [assignee.login]
+      assignee ->  [assignee.login]  ++ assignees
     end
 
-    %{issue | assignees: Enum.uniq assignees }
+
+    unique_assignees = assignees
+      |> Enum.uniq_by(&String.downcase/1)
+
+    %{issue | assignees: unique_assignees }
   end
 
   def determine_assignees(repos_with_issues) do
@@ -58,7 +62,7 @@ defmodule DevWizard.IssueWorkflow do
     end)
   end
 
-  defp assigned_prs_for_repo(repo, issues, user) do
+  defp assigned_prs_from_issues(issues, user) do
     comment_that_matches_current_user = fn (comment)->
       comment_has_assigned_user?(comment, user)
     end

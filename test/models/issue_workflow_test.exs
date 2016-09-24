@@ -1,12 +1,31 @@
 defmodule DevWizard.IssueWorkflowTest do
   use ExUnit.Case
   alias DevWizard.IssueWorkflow
-  alias DevWizard.GithubGateway.{Issue,Milestone}
+  alias DevWizard.GithubGateway.{Issue,Milestone,Comment,User}
 
   def fixture_data do
     {val, _} = Code.eval_file(Path.join(File.cwd!, ["test/", "fixtures/", "from-gateway.exs"]))
 
     for {k, v} <- val, into: %{}, do: {k, Enum.map(v, &Issue.to_struct/1)}
+  end
+
+  def comment_with_assignees(assignees) do
+    comma_separated = assignees
+      |> Enum.map(&("@#{&1}"))
+      |> Enum.join(", ")
+
+    quoted_comma_separated = assignees
+      |> Enum.map(&("\"#{&1}\""))
+      |> Enum.join(",")
+
+    body = """
+      Code review assigned to dev(s): #{comma_separated}
+      <!--JSON_PAYLOAD{
+      "assignees": [#{quoted_comma_separated}]
+      }END_JSON_PAYLOAD-->
+      """
+
+    %Comment{ body: body }
   end
 
   test "returns PRs assigned to requested user" do
@@ -87,5 +106,19 @@ defmodule DevWizard.IssueWorkflowTest do
       |> IssueWorkflow.determine_milestone(storyboard)
 
     assert pr.milestone == nil
+  end
+
+  test "does not report duplicate assignees" do
+    issue = %Issue{ body: "here's some code",
+                    comments: [
+                      comment_with_assignees(["joelmccracken", "tanookimario"])
+                    ],
+                    assignee: %User{ login: "TanookiMario" }
+                  }
+
+    issue =
+      issue |> IssueWorkflow.determine_assignees
+
+    assert issue.assignees == ["TanookiMario", "joelmccracken"]
   end
 end
