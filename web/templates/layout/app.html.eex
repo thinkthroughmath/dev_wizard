@@ -44,7 +44,7 @@
         <% end %>
       </div>
     </div>
-    <div class="ui container">
+    <div class="ui container page-body">
       <div class="row">
         <%
         info = get_flash(@conn, :info)
@@ -65,6 +65,13 @@
       </div>
       <div class="row">
         <%= render @view_module, @view_template, assigns %>
+      </div>
+    </div>
+    <div class="ui container inverted vertical footer segment ">
+      <div class="ui container">
+          <div class="ui stackable inverted equal height stackable grid">
+              <h1>⊥</h1>
+          </div>
       </div>
     </div>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
