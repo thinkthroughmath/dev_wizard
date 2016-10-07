@@ -18,12 +18,7 @@
         </thead>
         <tbody>
           <%= for pr <- prs do %>
-            <%= if pr.review_state == :signed_off do %>
-              <tr class="disabled">
-            <%= else %>
-              <tr>
-            <%= end  %>
-
+            <tr>
               <td>
                 <div class="ui orange ribbon label">
                   <%= pr.number %>
