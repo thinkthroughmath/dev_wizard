@@ -8,6 +8,7 @@
     <meta name="author" content="">
 
     <title>Dev Wizard - It's a Real Wizard!</title>
+    <link rel="icon" href="images/dev-wizard-winters-small.png" >
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/semantic.min.css">
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
   </head>
