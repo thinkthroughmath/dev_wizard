@@ -1,8 +1,8 @@
 defmodule DevWizard.GithubGateway do
   require Logger
   alias DevWizard.GithubGateway.Cache
-  alias DevWizard.GithubGateway.Issue
-  alias DevWizard.GithubGateway.Comment
+  alias DevWizard.GithubGateway.User
+  alias DevWizard.GithubGateway.Review
 
   @github_api Application.get_env(:dev_wizard, :github_api)
   @cache_time 60 * 10 # 10 minutes
@@ -45,19 +45,19 @@ defmodule DevWizard.GithubGateway do
 
   def involves(gw), do: involves(gw, gw.user[:login])
   def involves(gw, username) do
-    repos_issues_and_comments(gw, %{involving: username})
+    repos_issues_and_reviewers(gw, %{involving: username})
   end
 
   def needs_code_review(gw) do
-    repos_issues_and_comments(gw, %{labels: "Needs Code Review"})
+    repos_issues_and_reviewers(gw, %{labels: "Needs Code Review"})
   end
 
   def needs_qa(gw) do
-    repos_issues_and_comments(gw, %{labels: "Needs QA"})
+    repos_issues_and_reviewers(gw, %{labels: "Needs QA"})
   end
 
   def needs_release_notes(gw) do
-    repos_issues_and_comments(gw, %{labels: "Needs Release Notes"})
+    repos_issues_and_reviewers(gw, %{labels: "Needs Release Notes"})
   end
 
   def storyboard_issues(gw) do
@@ -66,18 +66,18 @@ defmodule DevWizard.GithubGateway do
     issues(gw, org, repo, %{state: "open"})
   end
 
-  defp repos_issues_and_comments(gw, filters) do
+  defp repos_issues_and_reviewers(gw, filters) do
     org   = gw.settings[:organization]
     repos = gw.settings[:repositories]
 
     Enum.reduce(repos, %{}, fn(repo, acc) ->
-      issues = issues_with_comments(gw, org, repo, filters)
-      Logger.debug "GithubGateway/repo_issues_and_comments/issues_for repo: #{repo}, count: #{Enum.count issues}, filters: #{inspect filters}"
+      issues = issues_with_reviewers(gw, org, repo, filters)
+      Logger.debug "GithubGateway/repo_issues_and_reviewers/issues_for repo: #{repo}, count: #{Enum.count issues}, filters: #{inspect filters}"
       Map.put(acc, repo, issues)
     end)
   end
 
-  defp issues_with_comments(gw, org, repo, filters) do
+  defp issues_with_reviewers(gw, org, repo, filters) do
     issues = issues(gw, org, repo, filters)
 
     case issues do
@@ -85,7 +85,10 @@ defmodule DevWizard.GithubGateway do
         []
       issues   ->
         Enum.map(issues, fn(issue) ->
-          %{ issue | :comments => comments(gw, org, repo, issue) }
+          %{ issue |
+             :reviewers => reviewers(gw, org, repo, issue),
+             :reviews => reviews(gw, org, repo, issue)
+           }
         end)
     end
   end
@@ -104,12 +107,12 @@ defmodule DevWizard.GithubGateway do
       end)
   end
 
-  defp comments(gw, org, repo, issue) do
-    comments = Cache.fetch_or_create(
-      {:issue_comments, repo, issue.number},
+  defp reviewers(gw, org, repo, issue) do
+    reviewers = Cache.fetch_or_create(
+      {:issue_reviewers, repo, issue.number},
       @cache_time,
       fn ->
-        @github_api.comments(
+        @github_api.requested_reviewers(
           gw.github_client,
           org,
           repo,
@@ -117,7 +120,25 @@ defmodule DevWizard.GithubGateway do
         )
       end)
 
-    comments
-    |> Enum.map(&Comment.to_struct/1)
+    reviewers
+    |> Enum.map(&User.to_struct/1)
   end
+
+  defp reviews(gw, org, repo, issue) do
+    reviews = Cache.fetch_or_create(
+      {:issue_reviews, repo, issue.number},
+      @cache_time,
+      fn ->
+        @github_api.reviews(
+          gw.github_client,
+          org,
+          repo,
+          issue.number
+        )
+      end)
+
+    reviews
+    |> Enum.map(&Review.to_struct/1)
+  end
+
 end

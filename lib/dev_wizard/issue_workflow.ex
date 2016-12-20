@@ -1,10 +1,9 @@
 defmodule DevWizard.IssueWorkflow do
-  @json_payload_regex ~r/JSON_PAYLOAD([\s\S]*?)END_JSON_PAYLOAD/
 
   alias DevWizard.GithubGateway.Issue
 
-  def pr_todo(repos_with_issues_with_comments, user) do
-    repos_with_issues_with_comments
+  def pr_todo(repos_with_issues_with_reviewers, user) do
+    repos_with_issues_with_reviewers
     |> Enum.map(fn {repo, issues} ->
       {repo, assigned_prs_from_issues(issues, user)}
     end)
@@ -32,99 +31,41 @@ defmodule DevWizard.IssueWorkflow do
     end)
   end
 
-  def determine_assignees(issue = %Issue{}) do
-    comments = issue.comments
-    assignees = Enum.flat_map comments, fn(comment) ->
-      assignment_data = parsed_json_payload(comment)
-      case assignment_data do
-        {:some, data} ->
-          data["assignees"]
-        _ -> []
-      end
-    end
-
-    assignees = case issue.assignee do
-      nil      -> assignees
-      assignee ->  [assignee.login]  ++ assignees
-    end
-
-
-    unique_assignees = assignees
-      |> Enum.uniq_by(&String.downcase/1)
-
-    %{issue | assignees: unique_assignees }
-  end
-
-  def determine_assignees(repos_with_issues) do
-    Enum.reduce(repos_with_issues, %{}, fn({repo, issues}, acc) ->
-      issues = Enum.map(issues, &(determine_assignees(&1)))
-      Map.put(acc, repo, issues)
-    end)
-  end
-
   defp assigned_prs_from_issues(issues, user) do
-    comment_that_matches_current_user = fn (comment)->
-      comment_has_assigned_user?(comment, user)
-    end
-
-    issue_has_assignment? = fn(issue)->
-      Enum.find(
-        issue.comments,
-        comment_that_matches_current_user
-      )
-    end
-
     issues
-    |> Enum.filter(issue_has_assignment?)
+    |> Enum.filter(fn(issue) ->
+      issue_has_assignment?(issue, user) || issue_has_reviewer?(issue, user)
+    end)
     |> Enum.map(fn(issue) ->
       state = determine_review_state(issue, user)
       %{ issue | :review_state => state }
     end)
   end
 
-  defp determine_review_state(issue, user) do
-    lgtms = lgtm_comments(issue, user)
-
-    if Enum.any?(lgtms) do
-      :signed_off
-    else
-      :not_signed_off
-    end
-  end
-
-  defp lgtm_comments(issue, user) do
-    issue.comments
-    |> Enum.filter(fn(comment) ->
-      Regex.run(~r/LGTM/, comment.body) &&
-        comment.user.login == user
+  defp issue_has_assignment?(issue, user) do
+    Enum.find(issue.assignees, fn(assignee) ->
+      assignee.login == user
     end)
   end
 
-  defp comment_has_assigned_user?(comment, assigned_username) do
-    assignment_data = parsed_json_payload(comment)
-
-    case assignment_data do
-      {:some, data} ->
-        Enum.find(data["assignees"], fn(assignee) ->
-          normalize_username(assigned_username) ==
-            normalize_username(assignee)
-        end)
-      _ -> false
-    end
+  defp issue_has_reviewer?(issue, user) do
+    Enum.find(issue.reviewers, fn(reviewer) ->
+      reviewer.login == user
+    end)
   end
 
-  defp parsed_json_payload(comment) do
-    match_info = Regex.run @json_payload_regex, comment.body
+  defp determine_review_state(issue, user) do
+    found =
+      issue
+      |> Issue.merged_reviews
+      |> Enum.find(fn(review) ->
+        review.user.login == user
+      end)
 
-    if match_info do
-      json_payload = Poison.decode!(Enum.at(match_info, 1))
-      {:some, json_payload}
-    else
-      {:none, "no json payload found"}
+    case found && found.state do
+      :approved          -> :signed_off
+      :changes_requested -> :changes_requested
+      _                  -> :not_signed_off
     end
-  end
-
-  defp normalize_username(name) do
-    name |> String.strip |> String.upcase
   end
 end

@@ -12,7 +12,7 @@
                     <th>Milestone</th>
                     <th>Title</th>
                     <th>Author</th>
-                    <th>Assignee</th>
+                    <th><%= assignee_title(@phase) %></th>
                     <th>Activity</th>
                 </tr>
             </thead>
@@ -48,13 +48,24 @@
                         </td>
                         <td>
                           <div class="ui list">
-                            <%= for assignee <- pr.assignees do %>
-                              <div class="item" >
-                                <div class="ui purple label">
-                                  <%= assignee %>
+                            <%= if @phase == :needs_code_review do %>
+                              <%= for review <- reviews(pr) do %>
+                                <div class="item" >
+                                  <div class="ui purple label">
+                                    <%= review.user.login %> -
+                                    <%= review.state %>
+                                  </div>
                                 </div>
-                              </div>
-                            <% end %>
+                              <%= end %>
+                            <%= else %>
+                              <%= for assignee <- pr.assignees do %>
+                                <div class="item" >
+                                  <div class="ui purple label">
+                                    <%= assignee.login %>
+                                  </div>
+                                </div>
+                              <%= end %>
+                            <%= end %>
                           </div>
                         </td>
                         <td>

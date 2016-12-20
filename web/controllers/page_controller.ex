@@ -27,6 +27,7 @@ defmodule DevWizard.PageController do
     conn
       |> assign(:current_user, user)
       |> assign(:prs_todo, issues)
+      |> assign(:phase, :needs_code_review)
       |> render("my_code_reviews.html")
   end
 
@@ -43,13 +44,13 @@ defmodule DevWizard.PageController do
     issues =
       gateway
       |> GithubGateway.needs_code_review
-      |> IssueWorkflow.determine_assignees
       |> IssueWorkflow.determine_milestone(storyboard)
 
     conn
       |> assign(:current_user, user)
       |> assign(:page_title, page_title)
       |> assign(:issue_list, issues)
+      |> assign(:phase, :needs_code_review)
       |> render("issue_list.html")
   end
 
@@ -66,13 +67,13 @@ defmodule DevWizard.PageController do
     issues =
       gateway
       |> GithubGateway.needs_qa
-      |> IssueWorkflow.determine_assignees
       |> IssueWorkflow.determine_milestone(storyboard)
 
     conn
     |> assign(:current_user, user)
     |> assign(:page_title, page_title)
     |> assign(:issue_list, issues)
+    |> assign(:phase, :needs_qa)
     |> render("issue_list.html")
   end
 
@@ -89,13 +90,13 @@ defmodule DevWizard.PageController do
     issues =
       gateway
       |> GithubGateway.needs_release_notes
-      |> IssueWorkflow.determine_assignees
       |> IssueWorkflow.determine_milestone(storyboard)
 
     conn
     |> assign(:current_user, user)
     |> assign(:page_title, page_title)
     |> assign(:issue_list, issues)
+    |> assign(:phase, :needs_release_notes)
     |> render("issue_list.html")
   end
 

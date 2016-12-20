@@ -48,6 +48,12 @@
                   </div>
                 <%= end %>
 
+                <%= if pr.review_state == :changes_requested do %>
+                  <div class="ui small label yellow">
+                     Waiting For Changes
+                  </div>
+                <%= end %>
+
                 <%= if pr.review_state == :not_signed_off do %>
                   <div class="ui small label blue">
                      Needs Code Review
