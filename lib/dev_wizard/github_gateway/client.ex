@@ -1,6 +1,5 @@
 defmodule DevWizard.GithubGateway.Client do
   require Logger
-  alias DevWizard.GithubGateway.Cache
   alias DevWizard.GithubGateway.Issue
 
   defstruct(tentacat: nil)
@@ -32,5 +31,13 @@ defmodule DevWizard.GithubGateway.Client do
 
   def comments(client, org, repo, issue)  do
     Tentacat.Issues.Comments.list(org, repo, issue, client.tentacat)
+  end
+
+  def reviews(client, org, repo, issue)  do
+    Tentacat.Pulls.Reviews.list(org, repo, issue, client.tentacat)
+  end
+
+  def requested_reviewers(client, org, repo, issue)  do
+    Tentacat.Pulls.RequestedReviewers.list(org, repo, issue, client.tentacat)
   end
 end
