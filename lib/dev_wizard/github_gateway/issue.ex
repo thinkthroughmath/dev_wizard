@@ -2,6 +2,7 @@ defmodule DevWizard.GithubGateway.Issue do
   alias DevWizard.GithubGateway.{Issue, User, Comment, Milestone, Review}
 
   @linked_issue_regex ~r/(closes|connect|fixes)(s)?(ed)?( to)?\s+(thinkthroughmath\/storyboard#|(http|https):\/\/github.com\/thinkthroughmath\/storyboard\/issues\/)([0-9]+)/i
+  @ignored_reviewers ["houndci-bot"]
 
   defstruct(
     assignee:       nil,
@@ -67,15 +68,19 @@ defmodule DevWizard.GithubGateway.Issue do
     from_reviewers =
       issue.reviewers
       |> Enum.map(fn(reviewer) ->
-      %Review{
-        id:    999999999999,
-        user:  reviewer,
-        state: :pending
-  }
-    end)
-
+        %Review{
+          id:    999999999999,
+          user:  reviewer,
+          state: :pending
+        }
+      end)
 
     (issue.reviews ++ from_reviewers)
+    |> Enum.filter(fn(review) ->
+      Enum.all?(@ignored_reviewers, fn(ignored_reviewer) ->
+        review.user.login != ignored_reviewer
+      end)
+    end)
     |> Enum.group_by(fn(review) -> review.user.login end)
     |> Enum.map(fn({user, reviews}) ->
       most_recent_review =
