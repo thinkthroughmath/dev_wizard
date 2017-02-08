@@ -25,4 +25,12 @@ defmodule DevWizard.PageView do
   def reviews(issue) do
     Issue.merged_reviews(issue)
   end
+
+  def review_to_color(review) do
+    case review.state do
+      :approved -> "green"
+      :pending  -> "purple"
+      _         -> "red"
+    end
+  end
 end

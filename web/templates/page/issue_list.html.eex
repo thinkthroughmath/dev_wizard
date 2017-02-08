@@ -51,7 +51,7 @@
                             <%= if @phase == :needs_code_review do %>
                               <%= for review <- reviews(pr) do %>
                                 <div class="item" >
-                                  <div class="ui purple label">
+                                  <div class="ui <%= review_to_color(review) %> label">
                                     <%= review.user.login %> -
                                     <%= review.state %>
                                   </div>
