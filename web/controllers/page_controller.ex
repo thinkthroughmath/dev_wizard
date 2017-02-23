@@ -6,8 +6,11 @@ defmodule DevWizard.PageController do
   alias DevWizard.IssueWorkflow
 
   def index(conn, _params) do
+    tagline = shuffle_tagline
+
     conn
     |> assign(:current_user, get_session(conn, :current_user))
+    |> assign(:tagline, tagline)
     |> render("index.html")
   end
 
@@ -15,6 +18,7 @@ defmodule DevWizard.PageController do
     require_login!(conn)
 
     user       = get_session(conn, :current_user)
+    tagline    = shuffle_tagline
     gateway    = gh_client(conn)
     storyboard = gateway |> GithubGateway.storyboard_issues
 
@@ -26,6 +30,7 @@ defmodule DevWizard.PageController do
 
     conn
       |> assign(:current_user, user)
+      |> assign(:tagline, tagline)
       |> assign(:prs_todo, issues)
       |> assign(:phase, :needs_code_review)
       |> render("my_code_reviews.html")
@@ -37,6 +42,7 @@ defmodule DevWizard.PageController do
     user = get_session(conn, :current_user)
 
     page_title = shuffle_needs_review_title
+    tagline    = shuffle_tagline
 
     gateway    = gh_client(conn)
     storyboard = gateway |> GithubGateway.storyboard_issues
@@ -49,6 +55,7 @@ defmodule DevWizard.PageController do
     conn
       |> assign(:current_user, user)
       |> assign(:page_title, page_title)
+      |> assign(:tagline, tagline)
       |> assign(:issue_list, issues)
       |> assign(:phase, :needs_code_review)
       |> render("issue_list.html")
@@ -60,6 +67,7 @@ defmodule DevWizard.PageController do
     user = get_session(conn, :current_user)
 
     page_title = shuffle_needs_qa_title
+    tagline    = shuffle_tagline
 
     gateway    = gh_client(conn)
     storyboard = gateway |> GithubGateway.storyboard_issues
@@ -72,6 +80,7 @@ defmodule DevWizard.PageController do
     conn
     |> assign(:current_user, user)
     |> assign(:page_title, page_title)
+    |> assign(:tagline, tagline)
     |> assign(:issue_list, issues)
     |> assign(:phase, :needs_qa)
     |> render("issue_list.html")
@@ -83,6 +92,7 @@ defmodule DevWizard.PageController do
     user = get_session(conn, :current_user)
 
     page_title = shuffle_needs_release_notes_title
+    tagline    = shuffle_tagline
 
     gateway    = gh_client(conn)
     storyboard = gateway |> GithubGateway.storyboard_issues
@@ -95,6 +105,7 @@ defmodule DevWizard.PageController do
     conn
     |> assign(:current_user, user)
     |> assign(:page_title, page_title)
+    |> assign(:tagline, tagline)
     |> assign(:issue_list, issues)
     |> assign(:phase, :needs_release_notes)
     |> render("issue_list.html")
@@ -138,6 +149,11 @@ defmodule DevWizard.PageController do
 
   def shuffle_needs_release_notes_title do
     ["Needs Release Notes", "Needs to be given release notes", "Yet to be given release notes"]
+      |> Enum.random
+  end
+
+  def shuffle_tagline do
+    ["It's a real wizard.", "It's the Gandalf of wizards.", "Bananna-flavored runts approved.", "It's better than Dumbledore.", "It's not bwoken.", "It's not dollar.", "A 'Top Shelf' wizard.", "Now garbage juice free.", "It's no Winters, but it's pretty good.", "IT'S. A. REAL. WIZARD.", "Width."]
       |> Enum.random
   end
 

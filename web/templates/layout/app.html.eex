@@ -20,7 +20,7 @@
         <div class="content">
           Dev Wizard
           <div class="sub header pink ui">
-            It's a real wizard.
+            <%= @tagline %>
           </div>
         </div>
       </h2>
