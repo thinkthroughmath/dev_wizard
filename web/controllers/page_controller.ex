@@ -36,7 +36,7 @@ defmodule DevWizard.PageController do
 
     user = get_session(conn, :current_user)
 
-    page_title = "Needs Review"
+    page_title = shuffle_needs_review_title
 
     gateway    = gh_client(conn)
     storyboard = gateway |> GithubGateway.storyboard_issues
@@ -59,7 +59,7 @@ defmodule DevWizard.PageController do
 
     user = get_session(conn, :current_user)
 
-    page_title = "Needs QA"
+    page_title = shuffle_needs_qa_title
 
     gateway    = gh_client(conn)
     storyboard = gateway |> GithubGateway.storyboard_issues
@@ -82,7 +82,7 @@ defmodule DevWizard.PageController do
 
     user = get_session(conn, :current_user)
 
-    page_title = "Needs Release Notes"
+    page_title = shuffle_needs_release_notes_title
 
     gateway    = gh_client(conn)
     storyboard = gateway |> GithubGateway.storyboard_issues
@@ -124,6 +124,21 @@ defmodule DevWizard.PageController do
         |> put_flash(:error, "You must be part of the #{gh_client.settings[:organization]} organization.")
         |> redirect(to: "/")
     end
+  end
+
+  def shuffle_needs_review_title do
+    ["Needs Review", "Needs to be reviewed", "Yet to be reviewed", "Review-Worthy", "Needs a reviewing"]
+      |> Enum.random
+  end
+
+  def shuffle_needs_qa_title do
+    ["Needs QA", "Needs to be tested", "Yet to be assured for quality", "Needs a thorough testing"]
+      |> Enum.random
+  end
+
+  def shuffle_needs_release_notes_title do
+    ["Needs Release Notes", "Needs to be given release notes", "Yet to be given release notes"]
+      |> Enum.random
   end
 
   defp require_login!(conn) do
