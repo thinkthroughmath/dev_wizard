@@ -153,7 +153,7 @@ defmodule DevWizard.PageController do
   end
 
   def shuffle_tagline do
-    ["It's a real wizard.", "It's the Gandalf of wizards.", "Bananna-flavored runts approved.", "It's better than Dumbledore.", "It's not bwoken.", "It's not dollar.", "A 'Top Shelf' wizard.", "Now garbage juice free.", "It's no Winters, but it's pretty good.", "IT'S. A. REAL. WIZARD.", "Width."]
+    ["It's a real wizard.", "It's the Gandalf of wizards.", "Bananna-flavored runts approved.", "It's better than Dumbledore.", "It's not bwoken.", "It's not dollar.", "A 'Top Shelf' wizard.", "Now garbage juice free.", "It's no Winters, but it's pretty good.", "IT'S. A. REAL. WIZARD.", "Width.", "This was changed."]
       |> Enum.random
   end
 
