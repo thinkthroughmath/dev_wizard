@@ -138,22 +138,22 @@ defmodule DevWizard.PageController do
   end
 
   def shuffle_needs_review_title do
-    ["Needs Review", "Needs to be reviewed", "Yet to be reviewed", "Review-Worthy", "Needs a reviewing"]
+    ["Needs Review", "Needs to be reviewed", "Yet to be reviewed", "Review-Worthy", "Needs a reviewing", "Ready for CR", "In review", "Review requested"]
       |> Enum.random
   end
 
   def shuffle_needs_qa_title do
-    ["Needs QA", "Needs to be tested", "Yet to be assured for quality", "Needs a thorough testing"]
+    ["Needs QA", "Needs to be tested", "Yet to be assured for quality", "Needs a thorough testing", "Ready for QA", "In testing", "Testing requested"]
       |> Enum.random
   end
 
   def shuffle_needs_release_notes_title do
-    ["Needs Release Notes", "Needs to be given release notes", "Yet to be given release notes"]
+    ["Needs Release Notes", "Needs to be given release notes", "Yet to be given release notes", "Ready for release notes", "Release notes requested"]
       |> Enum.random
   end
 
   def shuffle_tagline do
-    ["It's a real wizard.", "It's the Gandalf of wizards.", "Bananna-flavored runts approved.", "It's better than Dumbledore.", "It's not bwoken.", "It's not dollar.", "A 'Top Shelf' wizard.", "Now garbage juice free.", "It's no Winters, but it's pretty good.", "IT'S. A. REAL. WIZARD.", "Width.", "This was changed."]
+    ["It's a real wizard.", "It's the Gandalf of wizards.", "Bananna-flavored runts approved.", "It's better than Dumbledore.", "It's not bwoken.", "It's not dollar.", "A 'Top Shelf' wizard.", "Now garbage juice free.", "It's no Winters, but it's pretty good.", "IT'S. A. REAL. WIZARD.", "Width.", "This was changed.", "#TTMdevs", "A 10% time project", "Better than any yet-to-be-named wizard of Waverly Place'"]
       |> Enum.random
   end
 
