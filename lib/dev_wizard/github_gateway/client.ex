@@ -38,6 +38,6 @@ defmodule DevWizard.GithubGateway.Client do
   end
 
   def requested_reviewers(client, org, repo, issue)  do
-    Tentacat.Pulls.RequestedReviewers.list(org, repo, issue, client.tentacat)
+    Tentacat.Pulls.ReviewRequests.list(org, repo, issue, client.tentacat)
   end
 end

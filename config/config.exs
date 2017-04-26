@@ -35,3 +35,6 @@ import_config "#{Mix.env}.exs"
 config :phoenix, :generators,
   migration: true,
   binary_id: false
+
+# Custom header for Github Reviews API
+config :tentacat, :extra_headers, [{"Accept", "application/vnd.github.black-cat-preview+json"}]
