@@ -39,7 +39,7 @@ defmodule DevWizard.Mixfile do
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:cowboy, "~> 1.0"},
      {:oauth2, "~> 0.5"},
-     {:tentacat, github: "seejee/tentacat", branch: "cg/requested_reviewers"},
+     {:tentacat, "~> 0.6.0"},
      {:exactor, "~> 2.2.0"},
      {:timex, "~> 2.1.0"},
      {:exconstructor, "~> 1.0.0"}
